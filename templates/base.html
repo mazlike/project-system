@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="/static/deps/css/index.css">
+    <script src="/static/deps/css/arrows.js" defer></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> 
+</head>
+</head>
+<body>
+    <div>
+    {% block header %}
+        <header class="header">
+        <a href="{% url 'main:index' %}">
+            <img src="/static/deps/media/logo.jpg" class="logo">
+        </a>
+        <div class="button-container">
+            <a href="index.html">
+                <button>Главная</button>
+            </a>
+            <a href="news.html">
+                <button>Новости</button>
+            </a>
+            <a href="about.html">
+                <button>О&nbsp;&nbsp;нас</button>
+            </a>
+            <a href="{% url 'users:login' %}">
+                <button>Войти</button>
+            </a>
+            
+        </div>
+    </header>
+    {% endblock %}
+
+    {% block main %}
+        <div class="photo-gallery">
+            <div class="photos">
+                <div class="slides-container">
+                    <div class="slide" id="slide1" checked><img src="/static/deps/media/pattern-technology-cyberpunk-style-abstract-260nw-2442353181.jpg" alt="Фото 1" ></div>
+                    <div class="slide" id="slide2"><img src="/static/deps/media/vector-data-elements-scifi-interface-infographics_158582-3606.avif" alt="Фото 2"></div>
+                    <div class="slide" id="slide3"><img src="/static/deps/media/media_1938bbbe7b97a27228666801fe20a2d25cc45c0c4.jpg" alt="Фото 3"></div>
+                </div>
+            </div>
+            <div class="controls">
+            <input type="radio" name="carousel" id="photo1" checked>
+            <input type="radio" name="carousel" id="photo2">
+            <input type="radio" name="carousel" id="photo3">
+            </div>
+            <div class="carousel">
+            <button class="prev">&#10094;</button>
+            <button class="next">&#10095;</button>
+            </div>
+        </div>
+    {% endblock %}
+        
+    </div>
+    {% block footer %}
+        <footer class="footer">
+            <div class="contacts">
+                <div class="contact-button">
+                    <span style="padding-right: 50px;">Екатерина&nbsp;&nbsp;Чумакова</span><a href="mailto:ekkaterina_chumakova@mail.ru"><i class="fas fa-envelope"></i></a>
+                    <a href="tel:+79210773516"><i class="fas fa-phone"></i></a>
+                    <a href="https://t.me/Blblllblbll"><i class="fab fa-telegram-plane"></i></a>
+                    <a href="https://m.vk.com/miliosss"><i class="fab fa-vk"></i></a><br>
+                    <span style="padding-right: 120px;">Даниил&nbsp;&nbsp;Суббота</span><a href="mailto:daniil.maslike@yandex.ru"><i class="fas fa-envelope"></i></a>
+                    <a href="tel:+79118428356"><i class="fas fa-phone"></i></a>
+                    <a href="https://t.me/Maslike"><i class="fab fa-telegram-plane"></i></a>
+                    <a href="https://m.vk.com/maslike"><i class="fab fa-vk"></i></a>
+                </div>    
+            </div>
+            <div class="FAQ">
+                <a href="#">FAQ</a>
+            </div>
+        </footer>
+    {% endblock %}
+    <script src="{% static 'deps/js/jquery/jquery-3.7.0.min.js' %}"></script>
+    <script src="{% static 'deps/js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>
