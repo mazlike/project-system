@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Доступные проекты</h2>
+
+<ul>
+    {% for project in projects %}
+    <li>
+        <strong>{{ project.title }}</strong>
+        <p>{{ project.description|truncatewords:20 }}</p>
+    </li>
+    {% empty %}
+    <p>Нет доступных проектов.</p>
+    {% endfor %}
+</ul>
+
+<!-- Модальное окно -->
+<div id="projectModal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeProjectModal()">&times;</span>
+        <h2 id="modalTitle"></h2>
+        <p id="modalDescription"></p>
+        
+    </div>
+</div>
+
+
+{% endblock %}

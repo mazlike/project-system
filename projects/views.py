@@ -1,21 +1,49 @@
-from django.views.generic import ListView, CreateView, UpdateView
+from django.shortcuts import get_object_or_404
+from django.views.generic import ListView, CreateView, UpdateView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from .models import Task
 from .forms import TaskForm
-from .models import Project
-from .forms import ProjectRequestForm
+from .models import Project, Application
+
 from django.contrib import messages
 
-class ProjectRequestView(CreateView):
+class ProjectCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Project
-    form_class = ProjectRequestForm
-    template_name = 'projects/project_request.html'
+    fields = ['title', 'description']
+    template_name = 'projects/project_form.html'
     success_url = reverse_lazy('projects:project_list')
 
     def form_valid(self, form):
-        form.instance.creator = self.request.user
-        messages.success(self.request, "Заявка на проект успешно отправлена!")
+        form.instance.created_by = self.request.user
         return super().form_valid(form)
+    
+    def test_func(self):
+        return self.request.user.is_teacher
+    
+class ProjectListView(ListView):
+    model = Project
+    template_name = 'projects/project_list.html'
+    context_object_name = 'projects'
+
+
+class ProjectDetailView(LoginRequiredMixin, DetailView):
+    model = Project
+    template_name = 'projects/project_detail.html'
+    context_object_name = 'project'
+
+class ApplicationCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    model = Application
+    fields = []
+    
+    def form_valid(self, form):
+        form.instance.applicant = self.request.user
+        form.instance.project = get_object_or_404(Project, pk=self.kwargs['pk'])
+        messages.success(self.request, 'Ваша заявка успешно отправлена!')
+        return super().form_valid(form)
+    
+    def test_func(self):
+        return self.request.user.is_student
 
 class TaskListView(ListView):
     model = Task
@@ -35,3 +63,4 @@ class TaskCreateView(CreateView):
     
     def get_success_url(self):
         return reverse_lazy('tasks:task_list', kwargs={'project_id': self.kwargs['project_id']})
+    
