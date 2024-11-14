@@ -1,3 +1,22 @@
 {% extends "base.html" %}
 {% load static %}
 
+
+{% if not user.is_authenticated %}
+
+{% else %}
+    {% block header%}
+    <header class="header">
+        
+        <a href="{% url 'main:index' %}" class="logo">
+            <img src="/static/deps/logo.jpg" alt="Логотип">
+        </a>
+        <nav>
+            <a href="{% url 'main:news' %}" class="nav-item">Новости</a>
+            <a href="{% url 'main:about' %}" class="nav-item">О проекте</a>
+            <a href="{% url 'users:logout' %}" class="nav-item">Выйти</a>
+        </nav>
+        
+    </header>
+    {% endblock %}
+{% endif %}

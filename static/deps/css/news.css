@@ -1,0 +1,211 @@
+/* Общие стили */
+body {
+    background-color: #0E0D18;
+    font-family: Arial, sans-serif;
+    color: white;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Шапка */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #0E0D18;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    z-index: 10; /* Убедитесь, что шапка поверх контента */
+}
+
+/* Основной контейнер с тремя колонками */
+main {
+    margin-top: 80px; /* Сдвигаем вниз на высоту шапки */
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    height: calc(100vh - 120px); /* Высота основного блока, чтобы оставалось место для подвала */
+}
+
+/* Шапка */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #0E0D18;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    z-index: 10; /* Шапка всегда будет поверх контента */
+    justify-content: flex-start; /* Логотип и ссылки располагаются слева */
+}
+
+/* Логотип */
+header .logo img {
+    width: 50px; /* Фиксированная ширина логотипа */
+    height: 50px; /* Фиксированная высота логотипа */
+    border-radius: 50%; /* Круглая форма */
+    object-fit: cover; /* Чтобы изображение не искажалось */
+}
+
+/* Навигационные ссылки */
+header nav {
+    display: flex;
+    gap: 40px; /* Расстояние между ссылками и логотипом */
+    margin-left: 40px; /* Отступ между логотипом и ссылками */
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+header nav a:hover {
+    text-decoration: underline;
+}
+
+/* Основной контейнер контента */
+.content-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: flex-start; /* Выравнивание по верхнему краю */
+    height: 100%; /* Заполняет всю высоту */
+}
+
+/* Список новостей */
+.news-list {
+    width: 20%; /* 1/5 ширины страницы */
+    background-color: #1D1B32;
+    padding: 15px;
+    border-radius: 10px;
+    height: 90%; /* Высота по содержимому */
+    overflow-y: auto;
+}
+
+.news-list h2 {
+    text-align: center;
+}
+
+.news-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.news-list .news-item {
+    cursor: pointer;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #2a2a44;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.news-list .news-item:hover {
+    background-color: #3a3a55;
+}
+
+/* Детали выбранной новости */
+.news-details {
+    width: 45%; /* 2.5/5 ширины страницы */
+    padding: 20px;
+    background-color: #1D1B32;
+    border-radius: 10px;
+    text-align: left;
+    height: 90%; /* Высота по содержимому */
+}
+
+/* Слайдер */
+.announcements {
+    width: 25%; /* 1.5/5 ширины страницы */
+    padding: 15px;
+    background-color: #1D1B32;
+    border-radius: 10px;
+    height: 90%; /* Высота по содержимому */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: hidden; /* Обрезаем лишнее содержимое */
+}
+
+/* Слайдер */
+.slider {
+    position: relative;
+    overflow: hidden;
+    height: 80%; /* Задаём высоту для слайдера */
+    width: 90%;
+    margin-top: 20px;
+}
+
+.announcement {
+    position: absolute;
+    width: 100%;
+    height: 90%; /* Задаём высоту, чтобы заполнять контейнер */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Растягиваем изображения */
+.announcement img {
+    width: 100%; /* Растягиваем изображение на всю ширину */
+    height: 100%; /* Растягиваем изображение на всю высоту */
+    object-fit: cover; /* Растягиваем изображение, сохраняя пропорции */
+    border-radius: 10px;
+}
+
+/* Кнопки переключения слайдов */
+.slider-controls {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.slider-btn {
+    width: 12px;
+    height: 12px;
+    margin: 0 5px;
+    background-color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.slider-btn.active {
+    background-color: #3a3a55;
+}
+
+/* Выравнивание всех блоков по высоте */
+.content-container > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Выравнивание по верху */
+    height: 90%; /* Высота по содержимому */
+}
+
+/* Подвал */
+footer {
+    background-color: #0E0D18;
+    color: white;
+    padding: 20px;
+    display: flex;
+    justify-content: space-around;
+    margin-top: 50px;
+}
+
+footer .contact a {
+    color: white;
+    text-decoration: none;
+    margin-right: 10px;
+}
+
+footer .contact a:hover {
+    text-decoration: underline;
+}

@@ -1,0 +1,16 @@
+<!-- templates/projects/project_request.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Подать заявку на проект</title>
+</head>
+<body>
+    <h2>Подать заявку на проект</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Отправить заявку</button>
+    </form>
+</body>
+</html>

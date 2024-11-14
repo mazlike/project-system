@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Новости</title>
+        <link rel="stylesheet" href="/static/deps/css/news.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    </head>
+{% endblock %}
+<body>
+    {% block content %}
+    <main>
+        <div class="content-container">
+            <!-- Список новостей -->
+            <div class="news-list">
+                <h2>Новости</h2>
+                <ul>
+                    <li class="news-item">Новость 1</li>
+                    <li class="news-item">Новость 2</li>
+                    <li class="news-item">Новость 3</li>
+                </ul>
+            </div>
+
+            <!-- Детали выбранной новости -->
+            <div class="news-details">
+                <h2 id="news-title">Новость 1</h2>
+                <p id="news-text">Текст новости 1. Здесь будет описание первой новости.</p>
+            </div>
+
+            <!-- Объявления -->
+            <div class="announcements">
+                <h2>Объявления</h2>
+                <div class="slider">
+                    <div class="announcement"><img src="1.jpg" alt="Объявление 1"></div>
+                    <div class="announcement"><img src="2.jpg" alt="Объявление 2"></div>
+                    <div class="announcement"><img src="3.jpg" alt="Объявление 3"></div>
+                </div>
+                <div class="slider-controls">
+                    <span class="slider-btn active"></span>
+                    <span class="slider-btn"></span>
+                    <span class="slider-btn"></span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <script src="news.js"></script>
+    {% endblock %}
+</body>
+</html>
+

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block main %}
+    <div class="modal-content">
+        <!-- Отображение сообщений об успехе или ошибках -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Форма регистрации -->
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Зарегистрироваться</button>
+        </form>
+
+        <!-- Ссылка для входа, если пользователь уже зарегистрирован -->
+        <p>Уже есть аккаунт? <a href="{% url 'users:login' %}">Войдите</a></p>
+    </div>
+{% endblock %}

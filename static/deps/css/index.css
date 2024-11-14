@@ -1,303 +1,212 @@
-/* Подключение шрифта */
-@font-face {
-    font-family: 'cyberpunk'; 
-    src: url('Cyberpunk_RUS_BY_LYAJKA.ttf') format('ttf'), 
-         url('Cyberpunk_RUS_BY_LYAJKA.woff') format('woff'); 
-    font-weight: normal; 
-    font-style: normal; }
-
-* {
-    cursor: url('../arrow.cur'), auto;
-}
-
-/* Сброс браузерных предустановок, отмена горизонтальной прокрутки */
-body, html {
+/* Сброс стандартных отступов и границ */
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
-    overflow-x: hidden;}
+    box-sizing: border-box;
+}
+
+/* Общие стили */
+html, body {
+    height: 100%; /* Занимаем всю высоту экрана */
+    width: 100%;  /* Занимаем всю ширину экрана */
+    overflow-x: hidden; /* Убираем горизонтальную прокрутку */
+    font-family: Arial, sans-serif;
+    color: white;
+    background-color: #0E0D18;
+}
 
 body {
-    background-color: rgb(0, 0, 0);
-    background-image: url('static/deps/media/back.png');
-    background-size: cover;
-    background-position: top center;
-    background-attachment: fixed;}
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Центрируем все содержимое по горизонтали */
+}
 
+/* Шапка */
 header {
-    padding: 30px 70px; 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #0E0D18;
     display: flex;
     align-items: center;
-    justify-content: space-between;}
+    padding: 20px;
+    z-index: 10; /* Шапка всегда будет поверх контента */
+    justify-content: flex-start; /* Логотип и ссылки располагаются слева */
+}
 
-.logo {
-    width: 100px;
-    height: 100px;
-    margin-right: 100px;}
+/* Логотип */
+header .logo img {
+    width: 50px; /* Фиксированная ширина логотипа */
+    height: 50px; /* Фиксированная высота логотипа */
+    border-radius: 50%; /* Круглая форма */
+    object-fit: cover; /* Чтобы изображение не искажалось */
+}
 
-button {
-    width: 150px;
-    height: 50px;
-    color: rgb(255, 238, 0);
-    border: 1.5px solid;
-    border-color: rgb(255, 238, 0);
-    font-family: 'cyberpunk';
-    font-size: 25px;
-    padding-bottom: 7px;
-    background-color: rgb(0, 1, 5, 0.7);}
-
-.button-container {
-    display: flex;}
-
-.log_on_button {
-    background-color: rgb(255, 238, 0);
-    color: rgb(0, 1, 5);
-    font-weight: bold;}
-
-.log_on_button:hover {
-    background-color: rgb(255, 238, 0);
-    color: rgb(0, 1, 5);
-    font-weight: bold;
-    background-image: linear-gradient(to right, rgb(255, 238, 0), rgb(255, 238, 0));}
-    
-header button:hover {
-    background-image: linear-gradient(to right, rgba(255, 0, 127, 0.7), rgba(127, 0, 255, 0.7));
-    box-shadow: 0 0 10px rgba(255, 0, 127, 0.7), 0 0 20px rgba(127, 0, 255, 0.7);}
-
-.photo-gallery {
-    width: 100vw;
-    height: 80vh;
-    background-color: rgba(255, 238, 0, 0.537);
-    position: relative; /* Для позиционирования контролов */
-    overflow: hidden; /* Скрыть любые переполнения */
-    z-index: 1;}
-
-.photos {
+/* Навигационные ссылки */
+header nav {
     display: flex;
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-    position: relative;}
+    gap: 40px; /* Расстояние между ссылками и логотипом */
+    margin-left: 40px; /* Отступ между логотипом и ссылками */
+}
 
-.slides-container {
-    display: flex;
-    transition: transform 1s ease-in-out;
-    width: 100%;}
-
-.slide {
-    min-width: 100%;
-    height: 100%;
-    flex-shrink: 0;
-    opacity: 1; /* Убираем анимацию прозрачности */}
-    
-.slide.active {
-    opacity: 1;
-    transform: translateX(0); /* Положение для активного слайда */
-    z-index: 1;}
-    
-.slide.prev {
-    transform: translateX(-100%); /* Положение слева для предыдущего слайда */}
-
-.slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /*Позволит изображению заполнить контейнер, сохраняя пропорции */}
-
-.controls {
-    position: absolute;
-    bottom: 0px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 10px;}
-
-.carousel {
-    position: absolute;
-    top: 50%;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    transform: translateY(-50%);}
-    
-.carousel button {
-    background-color: transparent;
-    border: none;
+header nav a {
     color: white;
-    font-size: 30px;
-    padding: 10px;
-    align-items: center;}
-
-.carousel button:hover{
-    font-size: 40px;
-    align-items: center;
-    position: relative;
-    bottom: 10px;
+    text-decoration: none;
+    font-size: 18px;
 }
 
-/* Скрываем чекбокс */
-#modalToggle {
-    display: none;
+header nav a:hover {
+    text-decoration: underline;
 }
 
-/* Стили для кнопки */
-.open-modal-btn {
-    border: 1.5px solid;
-    border-color: rgb(255, 238, 0);
-    font-family: 'cyberpunk';
-    font-size: 25px;
-    padding-top: 3px;
-    padding-left: 0px;
-    width: 150px;
-    height: 40,5px;
+/* Заголовок */
+h1 {
+    font-size: 36px;
+    margin-bottom: 100px; /* Увеличенное расстояние между заголовком и кнопками */
+    font-weight: bold;
+    text-align: center; /* Центрирование текста по горизонтали */
+}
+
+/* Основной блок (главная часть) */
+main {
+    display: flex;
+    justify-content: center; /* Центрирование контента по горизонтали */
+    align-items: center; /* Центрирование контента по вертикали */
+    flex-direction: column; /* Элементы в колонку */
+    text-align: center; /* Центрирование текста */
+    flex-grow: 1; /* Занимает оставшееся пространство */
+    width: 100%; /* Занимает всю ширину экрана */
+}
+
+/* Контейнер для кнопок */
+.buttons {
     display: flex;
     justify-content: center;
-    background-color: rgb(255, 238, 0);
-    color: rgb(0, 1, 5);
-    font-weight: bold;
+    gap: 200px; /* Увеличено расстояние между кнопками */
 }
 
-.open-modal-btn:hover{
-    box-shadow: 0 0 10px rgba(255, 0, 127, 0.7), 0 0 20px rgba(127, 0, 255, 0.7);
+/* Стиль для кнопок */
+.role-button {
+    background-color: #3a3a55;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    width: 200px; /* Одинаковая ширина кнопок */
+    height: 50px; /* Одинаковая высота кнопок */
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Плавное увеличение при наведении */
 }
 
-/* Стили для модального окна */
+/* Эффект при наведении на кнопку */
+.role-button:hover {
+    transform: scale(1.1); /* Увеличение кнопки при наведении */
+}
+
+/* Эффект при нажатии на кнопку */
+.role-button:active {
+    transform: scale(1.05); /* Уменьшение кнопки при нажатии */
+}
+
+/* Модальные окна */
 .modal {
-    display: none;
+    display: none; /* Скрыты по умолчанию */
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.605); /* Полупрозрачный черный фон */
     justify-content: center;
     align-items: center;
-    z-index: 2;
+    z-index: 100;
 }
 
-/* Стили для содержимого модального окна */
+/* Стили для модального окна */
 .modal-content {
-    background-color: rgb(0, 0, 0);
+    background-color: #404075; /* Цвет модального окна */
     padding: 20px;
-    border-radius: 5px;
-    border: 10px solid;
-    border-color: rgb(255, 238, 0);
-    width: 500px;
-    text-align: center;
-    color: rgb(255, 238, 0);
-    font-family: 'cyberpunk';
-    font-size: 20px;
+    border-radius: 10px;
+    width: 450px; /* Увеличенная ширина модального окна */
+    text-align: left; /* Выровнять текст в модальном окне по левому краю */
+    opacity: 1; /* Сделаем окно полностью непрозрачным */
 }
 
-/* Показываем модальное окно, когда чекбокс отмечен */
-#modalToggle:checked ~ .modal {
+/* Центрирование заголовка в модальном окне */
+.modal-content h2 {
+    font-size: 20px;
+    margin-bottom: 20px; /* Увеличиваем отступ между заголовком и полями ввода */
+    text-align: center; /* Центрируем заголовок */
+}
+
+/* Обертка для метки и поля ввода */
+.modal-content .input-wrapper {
     display: flex;
+    align-items: center; /* Центрирование по вертикали */
+    margin-bottom: 15px; /* Расстояние между полями ввода */
+    width: 100%; /* Устанавливаем ширину контейнера на 100% */
 }
 
-.close-modal-btn{
-    background-color: red;
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    position: relative;
-    left: 249px;
-    bottom: 192px;
+/* Стили для меток */
+.modal-content label {
+    font-size: 16px;
+    width: 140px; /* Ширина метки */
+    margin-right: 10px; /* Отступ между меткой и полем ввода */
 }
 
-.log-in{
-    background-color: 0 0 10px rgba(255, 0, 127), 0 0 20px rgba(127, 0, 255);
-    background-image: linear-gradient(to right, rgba(255, 0, 127, 0.7), rgba(127, 0, 255, 0.7));
-    box-shadow: 0 0 10px rgba(255, 0, 127, 0.7), 0 0 20px rgba(127, 0, 255, 0.7);
-    border: 0px solid;
-    width: 140px;
-    height: 40px;
-    position: relative;
-    top: 20px;
-    color: rgb(255, 249, 160);
-    font-family: 'cyberpunk';
-    font-size: 25px;
-    padding-bottom: 7px;
+/* Стили для полей ввода */
+.modal-content input {
+    width: 100%; /* Поле ввода теперь занимает всю ширину доступного пространства */
+    padding: 10px;
+    background-color: #2a2a44;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 16px;
+    
 }
 
-.modal_label {
-    position: relative;
-    right: 20px;
-    color: aqua;
+/* Кнопка "Войти" */
+.modal-content button {
+    background-color: #3a3a55;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;;
 }
 
-.modal-content input[type="text"] {
-    position: relative;
-    right: -8px;
-    border-color:  rgb(255, 238, 0);
-    background-color: transparent;
-    color: aqua;
-    outline: none;
+/* Эффект при наведении на кнопку */
+.modal-content button:hover {
+    background-color: red; /* Кнопка становится красной при наведении */
 }
 
-.modal-content input[type="password"] {
-    position: relative;
-    right: 0px;
-    border-color:  rgb(255, 238, 0);
-    background-color: transparent;
-    color: aqua;
-    outline: none;
-}
 
-.modal-content input[type="text"]:focus {
-    box-shadow: 0 0 10px rgba(255, 0, 127, 0.7), 0 0 20px rgba(127, 0, 255, 0.7);
-}
 
-.modal-content input[type="password"]:focus {
-    box-shadow: 0 0 10px rgba(255, 0, 127, 0.7), 0 0 20px rgba(127, 0, 255, 0.7);
-}
-
-.footer {
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.669) 5%, rgba(0, 255, 255, 0.89));
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
+/* Подвал */
+footer {
+    background-color: #0E0D18;
+    color: white;
     padding: 20px;
-    height: 200px;
-    transition: cursor 0.3s;
+    display: flex;
+    justify-content: space-around;
+    margin-top: auto; /* Подвал внизу страницы */
+    width: 100%;
 }
 
-.footer.hover {
-    cursor: url('arrow2.cur'), auto;
+footer .contact a {
+    color: white;
+    text-decoration: none;
+    margin-right: 10px;
 }
 
-.footer *{
-    cursor: url('arrow2.cur'), auto;
-}
-.contact-button {
-    font-size: 20px;
-    font-family: 'cyberpunk';
-    font-weight: bold;
-    padding-top: 100px;
-}
-
-.contact-button a {
-    color: rgb(255, 238, 0);
-    padding-right: 20px;
-}
-
-.FAQ {
-    padding-top: 100px;
-}
-.FAQ a {
-    font-family: 'cyberpunk';
-    font-size: 30px;
-    font-weight: bold;
-    color: rgb(255, 238, 0);
-}
-
-.FAQ a:hover {
-    font-family: 'cyberpunk';
-    font-size: 30px;
-    font-weight: bold;
-    color: rgb(255, 238, 0);
-}
-
-.FAQ a:visited {
-    font-family: 'cyberpunk';
-    font-size: 30px;
-    font-weight: bold;
-    color: rgb(255, 238, 0);
+footer .contact a:hover {
+    text-decoration: underline;
 }
