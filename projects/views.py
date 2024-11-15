@@ -26,12 +26,6 @@ class ProjectListView(ListView):
     template_name = 'projects/project_list.html'
     context_object_name = 'projects'
 
-
-class ProjectDetailView(LoginRequiredMixin, DetailView):
-    model = Project
-    template_name = 'projects/project_detail.html'
-    context_object_name = 'project'
-
 class ApplicationCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Application
     fields = []

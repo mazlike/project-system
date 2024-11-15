@@ -9,7 +9,7 @@
         <main>
             <h1>ДОБРО ПОЖАЛОВАТЬ В СИСТЕМУ УПРАВЛЕНИЯ ПРОЕКТАМИ</h1>
             <div class="buttons">
-                <!-- <button class="role-button" id="teacher-button">Преподаватель</button> -->
+                <button class="role-button" id="reg-button">Регистрация</button>
                 <button class="role-button" id="entry-button">Вход</button>
             </div>
         </main>
@@ -20,12 +20,23 @@
                 <h2>Войти&nbsp;&nbsp;в&nbsp;&nbsp;личный&nbsp;&nbsp;кабинет</h2>
                 <form action="{% url 'users:login'  %}" method="post">
                     {% csrf_token %}
-                    {{ form.as_p }}
+                    {{ login_form.as_p }}
                     <button type="submit">Войти</button>
                 </form>
             </div>
         </div>
-        <script src="/static/deps/css/index.js"></script>
+
+        <div id="modal-reg" class="modal">
+            <div class="modal-content">
+                <h2>Регистрация</h2>
+                <form action="{% url 'users:register'  %}" method="post">
+                    {% csrf_token %}
+                    {{ register_form.as_p }}
+                    <button type="submit">Зарегистрироваться</button>
+                </form>
+            </div>
+        </div>
+        <script src="/static/deps/js/index.js"></script>
     {% else %}
     <div class="buttons">
         <a href="{% url 'users:logout' %}">

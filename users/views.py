@@ -19,7 +19,6 @@ class UserLoginView(LoginView):
         return reverse_lazy('users:profile', args=[self.request.user.username])
     
     def form_valid(self, form):
-        session_key = self.request.session.session_key
         user = form.get_user()
         if user:
             auth.login(self.request, user)
@@ -30,23 +29,25 @@ class UserLoginView(LoginView):
         return super().form_valid(form)
 
 class UserRegistrationView(CreateView):
-    template_name = 'users/registration.html'
+    template_name = 'main/index.html'
     form_class = UserRegistrationForm
-    success_url = reverse_lazy('users:profile')
+    
+    def get_success_url(self):
+        # После успешной регистрации перенаправляем на профиль пользователя
+        return reverse_lazy('users:profile', args=[self.request.user.username])
 
     def form_valid(self, form):
-        user = form.instance
-
+        user = form.save()  # Сохраняем форму и создаем пользователя
         if user:
-            form.save()
-            auth.login(self.request, user)
-
-        messages.success(self.request, f"{user.username}, Вы успешно зарегистрированы и вошли в аккаунт")
-        return HttpResponseRedirect(self.success_url)
+            auth.login(self.request, user)  # Выполняем авторизацию для нового пользователя
+            messages.success(self.request, f"{user.username}, Вы успешно зарегистрированы и вошли в аккаунт.")
+            # Перенаправляем пользователя на URL, указанный в get_success_url()
+            return redirect(self.get_success_url())
+        # Если пользователь не был создан, возвращаем стандартный ответ
+        return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['title'] = 'Home - Регистрация'
         return context
 
 class ProfileView(LoginRequiredMixin, TemplateView):

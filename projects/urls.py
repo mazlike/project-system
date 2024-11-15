@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ApplicationCreateView, ProjectCreateView, ProjectDetailView, ProjectListView, TaskListView, TaskCreateView
+from .views import ApplicationCreateView, ProjectCreateView, ProjectListView, TaskListView, TaskCreateView
 
 app_name = 'projects'
 
@@ -9,5 +9,4 @@ urlpatterns = [
     path('', ProjectListView.as_view(), name='project_list'),
     path('create/', ProjectCreateView.as_view(), name='project_create'),
     path('<int:pk>/apply/', ApplicationCreateView.as_view(), name='apply'),
-    path('<int:pk>/', ProjectDetailView.as_view(), name='detail'),  # для получения данных в формате JSON
 ]

@@ -10,6 +10,10 @@ document.getElementById("entry-button").addEventListener("click", function() {
     document.getElementById("entry-button").classList.add("selected");
 });
 
+document.getElementById("reg-button").addEventListener("click", function() {
+    document.getElementById("modal-reg").style.display = "flex";  // Показываем модальное окно
+    document.getElementById("reg-button").classList.add("selected");
+});
 
 // Закрытие модальных окон
 function closeModal(modalId) {
