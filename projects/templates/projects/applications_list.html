@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Заявки на проекты{% endblock %}
+
+{% block content %}
+<h1>Заявки на проекты</h1>
+
+{% if applications %}
+        <div class="prj-list">
+            <ul>
+                {% for application in applications %}
+                    <li class="prj-item">
+                        <div class="application-details">
+                            <h2>{{ application.project.title }}</h2>
+                            <p><strong>Пользователь:</strong> {{ application.applicant.username }}</p>
+                            <p><strong>Дата заявки:</strong> {{ application.applied_at }}</p>
+                            <p><strong>Статус:</strong> {{ application.get_status_display }}</p>
+                        </div>
+
+                        <!-- Форма для принятия или отклонения заявки -->
+                        <div class="application-actions">
+                            <form method="post" action="{% url 'projects:application_action' application.id %}">
+                                {% csrf_token %}
+                                <button type="submit" name="action" value="accept" class="btn btn-success">Принять</button>
+                                <button type="submit" name="action" value="reject" class="btn btn-danger">Отклонить</button>
+                            </form>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+{% else %}
+    <p>Нет новых заявок на проекты.</p>
+{% endif %}
+
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}

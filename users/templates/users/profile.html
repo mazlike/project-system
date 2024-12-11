@@ -2,21 +2,28 @@
 {% load static %}
 
 
-{% if not user.is_authenticated %}
+{% block content %}
+<h1>{{ user.first_name }} {{ user.last_name }}</h1>
 
-{% else %}
-    {% block header%}
-    <header class="header">
-        
-        <a href="{% url 'main:index' %}" class="logo">
-            <img src="/static/deps/logo.jpg" alt="Логотип">
-        </a>
-        <nav>
-            <a href="{% url 'main:news' %}" class="nav-item">Новости</a>
-            <a href="{% url 'main:about' %}" class="nav-item">О проекте</a>
-            <a href="{% url 'users:logout' %}" class="nav-item">Выйти</a>
-        </nav>
-        
-    </header>
-    {% endblock %}
-{% endif %}
+
+
+    <div class="content-container">
+        <div class="prj-list">
+            <h2>Ваши проекты</h2>
+            <ul>
+                {% for application in applications %}
+                    <li class="prj-item">
+                        <strong>{{ application.project.title }}</strong>
+                        <span> {{ application.get_status_display }}</span>
+                        {% if application.status == 'approved' %}
+                            <a href="{% url 'projects:task_list' application.project.id %}">Задачи</a>
+                            <a href="{% url 'projects:repository' application.project.id %}">Репозиторий</a>
+                            <a href="{% url 'projects:add_member' application.project.id %}">Добавить участника</a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+{% endblock %}

@@ -123,9 +123,11 @@ main {
     background-color: rgba(0, 0, 0, 0.605); /* Полупрозрачный черный фон */
     justify-content: center;
     align-items: center;
-    z-index: 100;
+    z-index: 1050;
 }
-
+.modal-backdrop {
+    z-index: 1040 !important;
+}
 /* Стили для модального окна */
 .modal-content {
     background-color: #404075; /* Цвет модального окна */
@@ -158,16 +160,25 @@ main {
     margin-right: 10px; /* Отступ между меткой и полем ввода */
 }
 
-/* Стили для полей ввода */
-.modal-content input {
-    width: 100%; /* Поле ввода теперь занимает всю ширину доступного пространства */
+/* Стили для полей ввода (input и textarea) */
+.modal-content input,
+.modal-content textarea {
+    width: 100%; /* Занимает всю ширину доступного пространства */
     padding: 10px;
-    background-color: #2a2a44;
+    background-color: #2a2a44; /* Цвет фона */
     border: none;
-    border-radius: 5px;
-    color: white;
+    border-radius: 5px; /* Скругленные углы */
+    color: white; /* Цвет текста */
     font-size: 16px;
-    
+    resize: none; /* Запрет изменения размера */
+    box-sizing: border-box; /* Учитывает padding и border при расчёте ширины */
+}
+
+/* Настройка высоты для textarea */
+.modal-content textarea {
+    min-height: 100px; /* Минимальная высота */
+    max-height: 300px; /* Максимальная высота */
+    overflow-y: auto; /* Прокрутка по вертикали, если контент превышает высоту */
 }
 
 /* Кнопка "Войти" */
@@ -188,7 +199,169 @@ main {
     background-color: red; /* Кнопка становится красной при наведении */
 }
 
+/* Основной контейнер контента */
+.content-container {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: flex-start; /* Выравнивание по верхнему краю */
+    height: 100%; /* Заполняет всю высоту */
+}
 
+/* Список новостей */
+.prj-list {
+    width: 20%; /* 1/5 ширины страницы */
+    background-color: #1D1B32;
+    padding: 15px;
+    border-radius: 10px;
+    height: 90%; /* Высота по содержимому */
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.prj-list h2 {
+    text-align: center;
+}
+
+.prj-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.prj-list .prj-item {
+    cursor: pointer;
+    padding: 20px;
+    margin-bottom: 10px;
+    background-color: #2a2a44;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.prj-list .prj-item:hover {
+    background-color: #3a3a55;
+}
+
+.prj-item.active {
+    background-color: #504f63; /* Цвет фона для активного элемента */
+}
+/* Детали выбранной новости */
+.prj-details {
+    width: 79%; /* 2.5/5 ширины страницы */
+    padding: 15px;
+    background-color: #1D1B32;
+    border-radius: 10px;
+    text-align: left;
+    height: 90%; /* Высота по содержимому */
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+.messages {
+    position: fixed;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000; /* чтобы уведомления отображались поверх всего */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: auto;
+    max-width: 80%;
+    text-align: center;
+}
+
+.messages li {
+    background-color: rgba(0, 0, 0, 0.8); /* темный фон */
+    color: white; /* белый текст */
+    padding: 10px 20px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.messages li.success {
+    background-color: #4caf50; /* зеленый для успеха */
+}
+
+.messages li.error {
+    background-color: #f44336; /* красный для ошибок */
+}
+
+.messages li.warning {
+    background-color: #ff9800; /* оранжевый для предупреждений */
+}
+
+.messages li.info {
+    background-color: #2196f3; /* синий для информации */
+}   
+
+/* Стили для списка заявок */
+.application-list {
+    list-style: none;
+    padding: 0;
+}
+
+.application-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.application-details {
+    flex: 1;
+}
+
+.application-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.messages {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.messages li {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.messages .success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.messages .error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
 
 /* Подвал */
 footer {
@@ -210,3 +383,4 @@ footer .contact a {
 footer .contact a:hover {
     text-decoration: underline;
 }
+

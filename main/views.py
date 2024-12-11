@@ -1,8 +1,8 @@
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView
-
-from users.forms import UserLoginForm, UserRegistrationForm
+from django.contrib.auth.forms import AuthenticationForm
+from users.forms import UserRegistrationForm
 
 
 class IndexView(TemplateView):
@@ -17,7 +17,7 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Главная'
-        context['login_form'] = UserLoginForm()
+        context['login_form'] = AuthenticationForm()
         context['register_form'] = UserRegistrationForm()
         return context
     

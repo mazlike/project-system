@@ -166,3 +166,4 @@ SESSION_COOKIE_AGE = 3600  # Время жизни сессии в секунд�
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# SESSION_ENGINE = 'django.contrib.sessions.backends.db'

@@ -1,28 +1,43 @@
 {% extends "base.html" %}
-
+{% load static %}
+{% block head %}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Проекты</title>
+        <link rel="stylesheet" href="/static/deps/css/projects.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    </head>
+{% endblock %}
 {% block content %}
-<h2>Доступные проекты</h2>
+<main>
+    <div class="content-container">
+        <!-- Список новостей -->
+        <div class="prj-list">
+            <h2>Доступные проекты</h2>
+            <ul>
+                {% for project in projects %}
+                <li id="prj-button" class="prj-item" data-id="{{ project.id }}" data-description="{{ project.description }}">
+                    <strong>{{ project.title }}</strong>
+                </li>
+                {% empty %}
+                <p>Нет доступных проектов.</p>
+                {% endfor %}
+            </ul>
+        </div>
 
-<ul>
-    {% for project in projects %}
-    <li>
-        <strong>{{ project.title }}</strong>
-        <p>{{ project.description|truncatewords:20 }}</p>
-    </li>
-    {% empty %}
-    <p>Нет доступных проектов.</p>
-    {% endfor %}
-</ul>
-
-<!-- Модальное окно -->
-<div id="projectModal" class="modal" style="display:none;">
-    <div class="modal-content">
-        <span class="close" onclick="closeProjectModal()">&times;</span>
-        <h2 id="modalTitle"></h2>
-        <p id="modalDescription"></p>
-        
+        <!-- Детали выбранной новости -->
+        <div class="prj-details">
+            <h3>Описание проекта</h3>
+            <p id="prj-description"></p>
+            <form id="apply-form" action="" method="post">
+                {% csrf_token %}
+                <button type="submit" class="role-button" id="add-button">Добавить</button>
+            </form>
+            
+        </div>
     </div>
-</div>
+</main>
 
-
+<script src="{% static 'deps/js/prj_list.js' %}"></script>
 {% endblock %}
