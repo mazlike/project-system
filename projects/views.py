@@ -6,14 +6,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy
 from git import Repo
 
+from projects.forms import SearchUserForm
 from users.models import User
-from .models import Repository, Task
-from .forms import SearchUserForm, TaskForm
-from .models import Project, Application
 
 from django.contrib import messages
 
-from projects import models
+from .models import Project, Application, Repository
 
 class ProjectCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     model = Project
@@ -69,87 +67,7 @@ class AddMemberView(LoginRequiredMixin, UserPassesTestMixin, View):
                 messages.error(request, 'Пользователь с таким никнеймом не найден.')
 
         return redirect('projects:add_member', project_id=project.id)
-
-class ApplicationsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
-    model = Application
-    template_name = 'projects/applications_list.html'
-    context_object_name = 'applications'
-
-    def test_func(self):
-        # Проверяем, является ли пользователь преподавателем
-        return self.request.user.is_teacher
-
-    def get_queryset(self):
-        # Получаем заявки только для проектов, созданных текущим пользователем (преподавателем)
-        return Application.objects.filter(project__created_by=self.request.user, status='pending')
- 
-class ApplicationActionView(LoginRequiredMixin, UserPassesTestMixin, View):
-    def test_func(self):
-        return self.request.user.is_teacher
-
-    def post(self, request, *args, **kwargs):
-        application_id = kwargs.get('application_id')
-        action = request.POST.get('action')
-        application = get_object_or_404(Application, id=application_id)
-
-        if application.project.created_by != request.user:
-            messages.error(request, 'У вас нет прав на выполнение этого действия.')
-            return redirect('projects:applications_list')
-
-        if action == 'accept':
-            # Одобряем заявку и назначаем пользователя лидером проекта
-            application.status = 'approved'
-            application.project.assign_leader(application.applicant)
-            messages.success(request, f'Заявка от {application.applicant.username} одобрена. Пользователь назначен лидером проекта.')
-        elif action == 'reject':
-            application.status = 'rejected'
-            messages.success(request, f'Заявка от {application.applicant.username} отклонена.')
-        else:
-            messages.error(request, 'Неизвестное действие.')
-            return redirect('projects:applications_list')
-
-        application.save()
-        return redirect('projects:applications_list')
-    
-class ApplicationCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
-    def post(self, request, *args, **kwargs):
-        project_id = kwargs.get('pk')
-        project = get_object_or_404(Project, id=project_id)
-
-        # Проверяем, есть ли уже заявка
-        if Application.objects.filter(applicant=request.user, project=project).exists():
-            messages.error(request, 'Вы уже подали заявку на этот проект.')
-            return redirect('users:profile', username=request.user.username)  # Перенаправляем на профиль
-
-        # Создаем новую заявку
-        Application.objects.create(applicant=request.user, project=project)
-        messages.success(request, 'Заявка успешно отправлена.')
-        return redirect('users:profile', username=request.user.username)  # Перенаправляем на профиль
-    
-    def test_func(self):
-        # Проверка, является ли пользователь студентом
-        return self.request.user.is_student
-    
-class TaskListView(ListView):
-    model = Task
-    template_name = 'tasks/task_list.html'
-    
-    def get_queryset(self):
-        return Task.objects.filter(project__id=self.kwargs['project_id'])
-
-class TaskCreateView(CreateView):
-    model = Task
-    form_class = TaskForm
-    template_name = 'tasks/task_form.html'
-    
-    def form_valid(self, form):
-        form.instance.project_id = self.kwargs['project_id']
-        return super().form_valid(form)
-    
-    def get_success_url(self):
-        return reverse_lazy('tasks:task_list', kwargs={'project_id': self.kwargs['project_id']})
-
-    
+  
 class RepositoryView(DetailView):
     model = Repository
     template_name = 'projects/repository.html'
@@ -164,3 +82,56 @@ class RepositoryView(DetailView):
         context['branches'] = repo.branches
         return context
     
+class ApplicationsListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    model = Application
+    template_name = 'projects/applications_list.html'
+    context_object_name = 'applications'
+
+    def test_func(self):
+        return self.request.user.is_teacher
+
+    def get_queryset(self):
+        return Application.objects.filter(project__created_by=self.request.user, status='pending')
+
+class ApplicationActionView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.is_teacher
+
+    def post(self, request, *args, **kwargs):
+        application_id = kwargs.get('application_id')
+        action = request.POST.get('action')
+        application = get_object_or_404(Application, id=application_id)
+
+        if application.project.created_by != request.user:
+            messages.error(request, 'У вас нет прав на выполнение этого действия.')
+            return redirect('projects:applications_list')
+
+        if action == 'accept':
+            application.status = 'approved'
+            application.project.assign_leader(application.applicant)
+            messages.success(request, f'Заявка от {application.applicant.username} одобрена. Пользователь назначен лидером проекта.')
+        elif action == 'reject':
+            application.status = 'rejected'
+            messages.success(request, f'Заявка от {application.applicant.username} отклонена.')
+        else:
+            messages.error(request, 'Неизвестное действие.')
+            return redirect('projects:applications_list')
+
+        application.save()
+        return redirect('projects:applications_list')
+
+class ApplicationCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    def post(self, request, *args, **kwargs):
+        project_id = kwargs.get('pk')
+        project = get_object_or_404(Project, id=project_id)
+
+        if Application.objects.filter(applicant=request.user, project=project).exists():
+            messages.error(request, 'Вы уже подали заявку на этот проект.')
+            return redirect('users:profile', username=request.user.username)
+
+        Application.objects.create(applicant=request.user, project=project)
+        messages.success(request, 'Заявка успешно отправлена.')
+        return redirect('users:profile', username=request.user.username)
+
+    def test_func(self):
+        return self.request.user.is_student

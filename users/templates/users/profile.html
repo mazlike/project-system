@@ -16,7 +16,7 @@
                         <strong>{{ application.project.title }}</strong>
                         <span> {{ application.get_status_display }}</span>
                         {% if application.status == 'approved' %}
-                            <a href="{% url 'projects:task_list' application.project.id %}">Задачи</a>
+                            <a href="{% url 'projects:tasks:task_list' application.project.id %}">Задачи</a>
                             <a href="{% url 'projects:repository' application.project.id %}">Репозиторий</a>
                             <a href="{% url 'projects:add_member' application.project.id %}">Добавить участника</a>
                         {% endif %}

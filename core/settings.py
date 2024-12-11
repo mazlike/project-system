@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'django_registration',
     'main',
     'users',
-    'projects'
+    'projects',
+    'tasks',
 ]
 
 MIDDLEWARE = [
