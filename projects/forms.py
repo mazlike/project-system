@@ -1,6 +1,8 @@
 from django import forms
 
-from .models import Project
+from users.models import User
+
+from .models import Application, Project, TeacherApplication
 
 class ProjectForm(forms.ModelForm):
     class Meta:
@@ -13,3 +15,22 @@ class ProjectForm(forms.ModelForm):
         
 class SearchUserForm(forms.Form):
     username = forms.CharField(label='Имя пользователя', max_length=150)
+
+class ApplicationForm(forms.ModelForm):
+    class Meta:
+        model = Application
+        fields = ['project_title', 'project_description', 'leader', 'supervisor']
+
+    project_title = forms.CharField(label="Название проекта", max_length=255)
+    project_description = forms.CharField(label="Описание проекта", widget=forms.Textarea)
+    leader = forms.ModelChoiceField(queryset=User.objects.filter(is_student=True), label="Лидер команды")
+    supervisor = forms.ModelChoiceField(queryset=User.objects.filter(is_teacher=True), label="Руководитель проекта", required=False)
+
+class TeacherApplicationForm(forms.ModelForm):
+    class Meta:
+        model = TeacherApplication
+        fields = ['title', 'description', 'requirements']
+    
+    title = forms.CharField(label="Название проекта", max_length=255)
+    description = forms.CharField(label="Описание проекта", widget=forms.Textarea)
+    requirements = forms.CharField(label="Требования", widget=forms.Textarea)

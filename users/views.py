@@ -1,6 +1,7 @@
 from django.http import HttpResponseRedirect, JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, TemplateView, UpdateView
 from django.contrib.auth.views import LoginView
 from django.views.generic import DetailView
@@ -8,8 +9,10 @@ from django.contrib import auth, messages
 from django.template.loader import render_to_string
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
-from projects.models import Application
+from projects.forms import ApplicationForm, TeacherApplicationForm
+from projects.models import Application, Project, TeacherApplication
 from users.forms import UserRegistrationForm
+from users.models import User
 
 class UserLoginView(LoginView):
     template_name = 'main/index.html'
@@ -69,7 +72,7 @@ class UserRegistrationView(CreateView):
         """Рендеринг только блока сообщений."""
         html = render_to_string('messages.html', {'messages': messages.get_messages(self.request)})
         return JsonResponse({'html': html})
-
+    
 class ProfileView(LoginRequiredMixin, DetailView):
     template_name = 'users/profile.html'
     context_object_name = 'user'
@@ -79,5 +82,93 @@ class ProfileView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['applications'] = Application.objects.filter(applicant=self.request.user)
+        user = self.request.user
+
+        # Передаем заявки и форму для подачи заявки в контекст
+        if user.is_teacher:
+            context['teacher_applications'] = TeacherApplication.objects.filter(created_by=user)
+            context['teacher_application_form'] = TeacherApplicationForm()
+            
+            # Если пользователь - преподаватель, показываем заявки, адресованные ему
+            context['applications'] = Application.objects.filter(supervisor=user, status='pending')
+        else:
+            # Если пользователь - студент, показываем его заявки и учителя
+            context['teacher_applications'] = TeacherApplication.objects.all()
+            context['applications'] = Application.objects.filter(applicant=user)
+        context['application_form'] = ApplicationForm()
+        if user.is_teacher:
+            context['projects'] = Project.objects.filter(created_by=user)
+        else:
+            context['projects'] = Project.objects.filter(members=user)
         return context
+    
+    def post(self, request, *args, **kwargs):
+        if 'submit_application' in request.POST:
+            form = ApplicationForm(request.POST)
+            if form.is_valid():
+                application = form.save(commit=False)
+                application.applicant = request.user
+
+                # Обработка участников команды
+                team_members = []
+                for i in range(1, 5):  # Максимум 4 участника
+                    username = request.POST.get(f'team_members_input_{i}', None)
+                    if username:
+                        user = User.objects.filter(username=username).first()
+                        if user:
+                            team_members.append(user)
+
+                application.save()
+                application.team_members.set(team_members)  # Сохраняем участников команды
+                
+                messages.success(request, 'Заявка успешно отправлена.')
+            else:
+                messages.error(request, 'Ошибка при отправке заявки.')
+            return redirect('users:profile', username=request.user.username)
+        
+        # Обработка принятия заявки преподавателем
+        elif 'approve_application' in request.POST:
+            application_id = request.POST.get('application_id')
+            application = get_object_or_404(Application, id=application_id)
+
+            if application.supervisor != request.user:
+                messages.error(request, 'У вас нет прав на выполнение этого действия.')
+                return redirect('users:profile', username=self.request.user.username)
+
+            # Создаем проект на основе заявки
+            project = application.create_project()
+            application.status = 'approved'
+            application.save()
+            messages.success(request, f"Заявка принята. Проект '{project.title}' создан.")
+            return redirect('users:profile', username=self.request.user.username)
+        elif 'create_application' in request.POST:
+            form = TeacherApplicationForm(request.POST)
+            if form.is_valid():
+                application = form.save(commit=False)
+                application.created_by = request.user
+                application.save()
+                messages.success(request, 'Заявка успешно создана.')
+            else:
+                messages.error(request, 'Ошибка при создании заявки.')
+            return redirect('users:profile', username=request.user.username)
+        
+        elif 'apply_for_application' in request.POST:
+            application_id = request.POST.get('application_id')
+            teacher_application = get_object_or_404(TeacherApplication, id=application_id)
+            student_application = Application.objects.create(
+                applicant=request.user,
+                project_title=teacher_application.title,
+                project_description=teacher_application.description,
+                supervisor=teacher_application.created_by,
+                leader=request.user,
+            )
+            messages.success(request, 'Заявка на проект успешно отправлена.')
+            return redirect('users:profile', username=request.user.username)
+        return super().post(request, *args, **kwargs)
+    
+class UserSearchView(View):
+    def get(self, request, *args, **kwargs):
+        query = request.GET.get('query', '')
+        users = User.objects.filter(username__icontains=query, is_student=True)[:5]  # Топ-5 результатов
+        results = [{'username': user.username, 'id': user.id} for user in users]
+        return JsonResponse(results, safe=False)

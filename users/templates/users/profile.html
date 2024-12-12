@@ -1,29 +1,192 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block head %}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Базовая страница</title>
+        <link rel="stylesheet" href="{% static 'deps/css/home.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    </head>
+{% endblock %}
 
-{% block content %}
-<h1>{{ user.first_name }} {{ user.last_name }}</h1>
+{% block header %}
+    <!-- Шапка -->
+    <header class="header">
+        <a href="home.html" class="logo">
+            <img src="{% static 'deps/logo.jpg' %}" alt="logo" class="avatar-img">
+            <span class="home">Home</span>
 
-
-
-    <div class="content-container">
-        <div class="prj-list">
-            <h2>Ваши проекты</h2>
-            <ul>
-                {% for application in applications %}
-                    <li class="prj-item">
-                        <strong>{{ application.project.title }}</strong>
-                        <span> {{ application.get_status_display }}</span>
-                        {% if application.status == 'approved' %}
-                            <a href="{% url 'projects:tasks:task_list' application.project.id %}">Задачи</a>
-                            <a href="{% url 'projects:repository' application.project.id %}">Репозиторий</a>
-                            <a href="{% url 'projects:add_member' application.project.id %}">Добавить участника</a>
-                        {% endif %}
-                    </li>
-                {% endfor %}
+        </a>
+        <div class="user-info">
+        <span class="username">{{ user.username }}</span>
+        <div class="avatar" onclick="toggleDropdown()">
+            <img src="{% static 'deps/logo.jpg' %}" alt="Avatar" class="avatar-img">
+            <ul id="avatar-dropdown" class="dropdown">
+                <li><a href="#">Настройки</a></li>
+                <li><a href="{% url 'users:logout' %}">Выход</a></li>
             </ul>
         </div>
-    </div>
+    </header>
+{%endblock%}
 
+{% block content %}
+<!-- Основной блок -->
+    <main class="main-content">
+        <!-- Навигационная панель -->
+        <nav class="navigation">
+            <span class="navigation-item" onclick="showSection('my-projects')">Мои проекты</span>
+            {% if user.is_student %}
+                <span class="navigation-item" onclick="showSection('submit-application')">Подать заявку на проект</span>
+            {% else %}
+                <span class="navigation-item" onclick="showSection('create-project')">Создать проект</span>
+            {% endif %} 
+            <span class="navigation-item" onclick="showSection('view-applications')">Просмотр заявок</span>
+            <span class="navigation-item" onclick="showSection('my-applications')">Мои заявки</span>
+        </nav>
+    <section class="content" id="content">
+      <!-- Мои проекты -->
+      <div id="my-projects" class="section">
+        <h1>Мои проекты</h1>
+        {% for project in projects %}
+            <div class="application-block">
+                <h2>{{ project.title }}</h2>
+                <p><strong>Описание:</strong> {{ project.description }}</p>
+                <p><strong>Лидер:</strong> {{ project.leader.username }}</p>
+                <p><strong>Участники:</strong>
+                    <ul>
+                        {% for member in project.members.all %}
+                            <li>{{ member.username }}</li>
+                        {% endfor %}
+                    </ul>
+                </p>
+            </div>
+        {% empty %}
+            <div class="application-block">Нет доступных проектов.</div>
+        {% endfor %}
+      </div>
+
+      <!-- Подать заявку на проект -->
+      <div id="submit-application" class="section" style="display: none;">
+        <h1>Подать заявку на проект</h1>
+        <form method="post" action="{% url 'users:profile' user.username %}">
+            {% csrf_token %}
+            {% for field in application_form %}
+            <div class="form-group">
+                {{field.label_tag}}
+                <div>{{field}}</div>
+            </div>
+            {% endfor %}
+             <!-- Контейнер для полей участников команды -->
+            <div id="team-members-container">
+                <label>Участники команды:</label>
+                <div class="team-member-input">
+                    <input type="text" class="team-member-autocomplete" name="team_members_input_1" placeholder="Введите username">
+                    <span class="remove-member" onclick="removeMember(this)">✖</span> <!-- Иконка удаления -->
+                </div>
+            </div>
+
+            <div> <button type="button" id="add-team-member">Добавить участника</button> </div>
+            <button type="submit" name="submit_application">Отправить заявку</button>
+        </form>
+      </div>
+      {% if user.is_teacher %}
+        <div id="create-project" class="section" style="display: none;">
+            <h1>Создать проект</h1>
+            <form method="post" action="{% url 'users:profile' user.username %}">
+                {% csrf_token %}
+                {% for field in teacher_application_form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    <div>{{ field }}</div>
+                </div>
+                {% endfor %}
+                <button type="submit" name="create_application">Создать заявку</button>
+            </form>
+        </div>
+      {% endif %}
+      <!-- Просмотр заявок -->
+      <div id="view-applications" class="section" style="display: none;">
+        <h1>Просмотр заявок</h1>
+        {% if user.is_teacher %}
+        
+            {% for application in applications %}
+                <div class="application-block">
+                    <h2>{{ application.project_title }}</h2>
+                    <p><strong>Описание:</strong> {{ application.project_description }}</p>
+                    <p><strong>Лидер:</strong> {{ application.leader.username }}</p>
+                    <p><strong>Участники:</strong>
+                        <ul>
+                            {% for member in application.team_members.all %}
+                                <li>{{ member.username }}</li>
+                            {% endfor %}
+                        </ul>
+                    </p>
+                    {% if user.is_teacher %}
+                        <form method="post" action="{% url 'users:profile' username=user.username %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="application_id" value="{{ application.id }}">
+                            <button type="submit" name="approve_application">Принять заявку</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% empty %}
+                <div class="application-block">Нет новых заявок.</div>
+            {% endfor %}
+        {% else %}
+            {% for application in teacher_applications %}
+            <div class="application-block">
+                <h2>{{ application.title }}</h2>
+                <p><strong>Описание:</strong> {{ application.description }}</p>
+                <p><strong>Требования:</strong> {{ application.requirements }}</p>
+                <form method="post" action="{% url 'users:profile' username=user.username %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="application_id" value="{{ application.id }}">
+                    <div class="form-group">
+                        <label for="leader">Лидер команды:</label>
+                        <div><input type="text" class="team-member-autocomplete" name="leader_input" placeholder="Введите username лидера"></div>
+                    </div>
+
+                    <!-- Контейнер для полей участников команды -->
+                    <div id="team-members-container">
+                        <label>Участники команды:</label>
+                        <div class="team-member-input">
+                            <input type="text" class="team-member-autocomplete" name="team_members_input_1" placeholder="Введите username">
+                            <span class="remove-member" onclick="removeMember(this)">✖</span> <!-- Иконка удаления -->
+                        </div>
+                    </div>
+
+                    <!-- Кнопка для добавления участников -->
+                    <div>
+                        <button type="button" id="add-team-member">Добавить участника</button>
+                    </div>
+                    <button type="submit" name="apply_for_application">Подать заявку</button>
+                </form>
+            </div>
+            {% empty %}
+                <div class="application-block">Нет доступных заявок.</div>
+            {% endfor %}
+        {% endif  %}
+      </div>
+        
+      <!-- Мои заявки -->
+      <div id="my-applications" class="section" style="display: none;">
+        <h1>Мои заявки</h1>
+        
+        {% for application in applications %}
+            <div class="application-block">
+                <h2>{{ application.project_title }}</h2>
+                <div class="status">Статус: <span class="status-text">{{ application.get_status_display }}</span></div>
+                <button class="delete-button" onclick="deleteApplication(this)">Удалить заявку</button>
+            </div>
+        {% empty %}
+            <div class="application-block">Нет заявок.</div>
+        {% endfor %}
+        
+      </div>
+    </section>
+    </main>
+<script src="{% static 'deps/js/add_teammate.js' %}"></script>
+<script src="{% static 'deps/js/profile.js' %}"></script>
 {% endblock %}

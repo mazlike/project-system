@@ -1,0 +1,372 @@
+/* Общие стили */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #0E0D18;
+  color: white;
+  overflow: hidden;
+}
+
+/* Шапка */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1D1B32;
+  padding: 20px;
+  border-radius: 20px;
+  margin-top: 10px;
+  margin-left: 5px;
+  margin-right: 5px;
+  height: 5%;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+}
+
+.logo .home {
+  margin-left: 10px;
+  font-size: 20px;
+  color: white;
+}
+
+.logo .projects {
+  margin-left: 20px;
+  font-size: 20px;
+  color: white;
+}
+
+/* Информация о пользователе */
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.username {
+  margin-right: 15px;
+}
+
+.avatar {
+  position: relative;
+  cursor: pointer;
+}
+
+.avatar-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* Выпадающий список */
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: #292648;
+  border-radius: 10px;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown.show {
+  display: block;
+}
+
+.dropdown li {
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+
+.dropdown li:last-child {
+  border-bottom: none;
+}
+
+.dropdown li a {
+  color: white;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown li a:hover {
+  background-color: #38304E;
+}
+
+/* Основной контент */
+.main-content {
+  display: flex;
+  flex-direction: row;
+  padding: 20px;
+  margin-top: 5px;
+  height: calc(100% - 30px);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.navigation {
+  background-color: #1D1B32;
+  width: 200px;
+  padding: 20px;
+  border-radius: 20px;
+  margin-left: -15px;
+  height: calc(100% - 140px);
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.navigation-item {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  display: block;
+  padding: 10px;
+}
+
+/* Контент */
+.content {
+  background-color: #0E0D18;
+  color: white;
+  flex-grow: 1;
+  padding: 5px 0 0 30px;
+  overflow-y: auto;
+  border-radius: 10px;
+  height: calc(100% - 140px);
+  margin-bottom: 20px;
+}
+
+.content h1 {
+  font-size: 28px;
+}
+
+.content ul {
+  list-style: none;
+  padding: 0;
+}
+
+.content ul li {
+  margin: 10px 0;
+}
+
+/* Для выделения активной вкладки */
+.navigation-item.active {
+  background-color: #38304E;
+  color: #FFD700;
+}
+
+/* При наведении */
+.navigation-item:hover {
+  background-color: #292648;
+}
+
+/* Стили для формы подачи заявки */
+form label {
+  font-size: 25px; /* Увеличенный размер шрифта */
+}
+
+form input[type="text"],
+form textarea,
+form select {
+  background-color: #38304E; /* Цвет полей */
+  color: white;
+  border: 1px solid transparent; /* Стандартная граница */
+  border-radius: 5px;
+  padding: 5px;
+  margin-top: 10px; /* Расстояние между названием блока ввода и блоком */
+  width: 400px; /* Ширина всех полей ввода */
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+form textarea {
+  width: 400px; /* Ширина поля для комментария */
+  height: 150px; /* Добавлено для удобства */
+}
+
+form input[type="text"]:focus,
+form textarea:focus,
+form select:focus {
+  background-color: #453B60; /* Светлее, когда активное */
+  border-color: white; /* Белая граница, когда фокус */
+  outline: none;
+}
+
+form input.error,
+form textarea.error {
+  border-color: red; /* Красная граница, если ошибка */
+}
+
+form button {
+  background-color: #514969; /* Цвет кнопок */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  margin-top: 15px; /* Расстояние сверху */
+  transition: background-color 0.3s;
+}
+
+form button:hover {
+  background-color: #6A5B92; /* Немного светлее при наведении */
+}
+
+.section h1{
+  font-size: 35px;
+}
+
+/* Стили для вкладок */
+.application-block {
+  background-color: #453B60; /* Цвет фона блока */
+  color: white;
+  padding: 20px;
+  margin-bottom: 15px; /* Расстояние между блоками */
+  border-radius: 10px;
+  width: 100%; /* Блоки занимают всю ширину */
+  box-sizing: border-box; /* Учитываем padding в ширине */
+}
+
+.application-block h2 {
+  margin: 0 0 10px 0; /* Отступы между заголовком и содержимым */
+}
+
+.accept-button {
+  background-color: #6A5B92; /* Цвет кнопки */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  margin-top: 15px; /* Отступ сверху */
+  transition: background-color 0.3s;
+}
+
+.accept-button:hover {
+  background-color: #8174A2; /* Цвет кнопки при наведении */
+}
+
+/* Стили для вкладок заявок */
+.application-block {
+  background-color: #453B60;
+  color: white;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  position: relative; 
+}
+.autocomplete-dropdown {
+  position: absolute;
+  background-color: #38304e;
+  border: 1px solid #8174A2;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  z-index: 1000;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.autocomplete-dropdown li {
+  padding: 5px;
+  cursor: pointer;
+}
+
+.autocomplete-dropdown li:hover {
+  background-color: #38304E;
+}
+
+.remove-member {
+  cursor: pointer;
+  color: red;
+  font-size: 16px;
+  margin-left: 5px;
+  vertical-align: middle;
+}
+
+.remove-member:hover {
+  color: darkred; /* Цвет при наведении */
+}
+.application-block h2 {
+  margin: 0 0 10px 0;
+}
+
+.application-block .status {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.application-block .status-text {
+  color: #FFD700;
+}
+
+.accept-button, .delete-button {
+  background-color: #6A5B92;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+  margin-top: 15px;
+  transition: background-color 0.3s;
+}
+
+.accept-button:hover, .delete-button:hover {
+  background-color: #8174A2;
+}
+
+.messages {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000; /* чтобы уведомления отображались поверх всего */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: auto;
+  max-width: 80%;
+  text-align: center;
+}
+
+.messages li {
+  background-color: rgba(0, 0, 0, 0.8); /* темный фон */
+  color: white; /* белый текст */
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.messages li.success {
+  background-color: #4caf50; /* зеленый для успеха */
+}
+
+.messages li.error {
+  background-color: #f44336; /* красный для ошибок */
+}
+
+.messages li.warning {
+  background-color: #ff9800; /* оранжевый для предупреждений */
+}
+
+.messages li.info {
+  background-color: #2196f3; /* синий для информации */
+}  
+
