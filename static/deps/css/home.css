@@ -49,6 +49,30 @@ html, body {
   display: flex;
   align-items: center;
 }
+.nickname {
+  display: inline-block;
+  padding: 10px 15px; /* Отступы внутри кнопки */
+  background-color: #594b6d; /* Цвет фона */
+  color: #fff; /* Цвет текста */
+  border: none; /* Убираем границу */
+  border-radius: 5px; /* Закругленные углы */
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* Плавный переход */
+}
+
+.nickname:hover {
+  background-color: #3b304b; 
+}
+.nickname.leader {
+  background-color: #594b6d; 
+}
+
+.nickname.leader:hover {
+  background-color: #3b304b; 
+}
 
 .username {
   margin-right: 15px;
@@ -219,6 +243,8 @@ form button:hover {
   background-color: #6A5B92; /* Немного светлее при наведении */
 }
 
+
+
 .section h1{
   font-size: 35px;
 }
@@ -253,7 +279,65 @@ form button:hover {
 .accept-button:hover {
   background-color: #8174A2; /* Цвет кнопки при наведении */
 }
+/* Стили для списка участников */
+.team-members-list {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
 
+/* Стили для каждого участника */
+.team-member-item {
+  display: flex;
+  align-items: center;
+  background-color: #f0f0f0;
+  border-radius: 20px; /* Скругленные углы */
+  padding: 5px 10px;
+  padding-right: 5px; /* Уменьшаем правый отступ для крестика */
+  border: 1px solid #ccc;
+}
+
+/* Стили для никнейма */
+.team-member-username {
+  margin-right: 10px;
+  font-size: 14px;
+}
+
+/* Стили для кнопки удаления */
+.remove-member {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 5px;
+}
+
+.remove-member:hover {
+  color: #ff0000; /* Красный цвет при наведении */
+}
+.autocomplete-dropdown {
+  position: absolute;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 1000;
+  width: 100%;
+}
+
+.autocomplete-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.autocomplete-item:hover {
+  background-color: #4a425f;
+}
 /* Стили для вкладок заявок */
 .application-block {
   background-color: #453B60;
@@ -265,26 +349,61 @@ form button:hover {
   box-sizing: border-box;
   position: relative; 
 }
-.autocomplete-dropdown {
-  position: absolute;
-  background-color: #38304e;
-  border: 1px solid #8174A2;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 100%;
-  z-index: 1000;
-  max-height: 150px;
-  overflow-y: auto;
+/* Стили для контейнера с полем ввода и выпадающим списком */
+.team-members-container {
+  position: relative;
 }
 
-.autocomplete-dropdown li {
-  padding: 5px;
+/* Стили для поля ввода */
+.team-member-input {
+  display: flex;
+  align-items: center;
+}
+
+.team-member-autocomplete {
+  flex-grow: 1; /* Поле ввода занимает всю доступную ширину */
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.confirm-member {
+  margin-left: 10px;
+  padding: 10px 15px;
+  background-color: #4a425f;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
 }
 
-.autocomplete-dropdown li:hover {
-  background-color: #38304E;
+.confirm-member:hover {
+  background-color: #0056b3;
+}
+
+/* Стили для выпадающего списка */
+.autocomplete-dropdown {
+  position: absolute;
+  top: 100%; /* Выпадающий список находится сразу под полем ввода */
+  left: 0;
+  width: 29%; /* Ширина равна ширине поля ввода */
+  background-color: #4a425f;
+  border: 1px solid #4a425f;
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.autocomplete-item {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.autocomplete-item:hover {
+  background-color: #514a64;
 }
 
 .remove-member {

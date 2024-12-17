@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Проект: Мои проекты</title>
+        <link rel="stylesheet" href="{% static 'deps/css/project.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        
+    </head>
+{% endblock %}
+
+{% block header %}
+    <header class="header">
+        <a href="{% url 'users:profile' user.username %}" class="logo">
+            <img src="{% static 'deps/logo.jpg' %}" alt="logo" class="avatar-img">
+            <span class="home">Home</span>
+            <span class="project-title"></span>
+        </a>
+        <div class="user-info">
+        <span class="username">{{ user.username }}</span>
+        <div class="avatar" onclick="toggleDropdown()">
+            <img src="{% static 'deps/logo.jpg' %}" alt="Avatar" class="avatar-img">
+            <ul id="avatar-dropdown" class="dropdown">
+                <li><a href="#">Настройки</a></li>
+                <li><a href="{% url 'users:logout' %}">Выход</a></li>
+            </ul>
+        </div>
+    </header>
+{%endblock%}
+
+{% block content %}
+    <main class="main-content">
+      <nav class="navigation">
+          <div class="navigation-item" onclick="showBlock('diagram')">Диаграмма</div> 
+          <div class="navigation-item" onclick="showBlock('team')">Команда</div>
+          {% comment %} <div class="navigation-item" onclick="showBlock('updates')">Последние обновления</div> {% endcomment %}
+          <div class="navigation-item" onclick="showBlock('tasks')">Задачи</div>
+          <div class="navigation-item" onclick="showBlock('repository')">Репозиторий</div>  
+          {% if user.is_teacher %}
+              <div class="navigation-item teacher-only" onclick="showBlock('evaluate')">Оценить проект</div>
+          {% endif %}
+      </nav>
+    <section class="content student-content" id="student-content">
+      <div class="block" id="diagram">
+        <h2>Диаграмма проекта</h2><br>
+        <div class="image-upload">
+          <img id="diagram-image" src="{% static 'deps/logo.jpg' %}" alt="Диаграмма проекта"><br>
+        </div>
+        <br><input type="file" id="upload-diagram" onchange="uploadDiagram(event)">
+      </div> 
+      
+      <div class="block" id="team">
+        <h2>Команда проекта</h2><br>
+        {% for member in members %}
+          {% if member == leader %}
+            <div class="team-member leader">
+              <p>{{member.first_name}} {{member.last_name}}</p>
+            </div>
+          {% elif member is not leader %}
+          <div class="team-member student">
+            <p>{{member.first_name}} {{member.last_name}}</p>
+          </div>
+          {% endif %}
+        {% endfor %}
+        {% comment %} <button class="leave-project" onclick="leaveProject()">Уйти из проекта</button> {% endcomment %}
+        
+        
+      </div>
+
+      {% comment %} <div class="block" id="updates" style="display: none;">
+        <h2>Последние изменения</h2>
+        <div class="update">
+          <p>Изменение 1: Добавлен новый файл в репозиторий.</p>
+        </div>
+      </div> {% endcomment %}
+
+      <div class="block" id="tasks" >
+        <div class="flex-header">
+          <h2>Задачи</h2>
+          <button class="btn btn-primary" onclick="openModal()">Создать задачу</button>
+        </div>
+          <!-- Модальное окно -->
+          <div id="customModal" class="modal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Создание задачи</h5>
+                        <button type="button" class="btn-close" onclick="closeModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="taskForm" method="post" action="{% url 'projects:project' project.id %}">
+                          {% csrf_token %}
+                          <div class="mb-3">
+                              <label for="taskTitle" class="form-label">Название задачи</label>
+                              <input type="text" class="form-control" id="taskTitle" name="title" required>
+                          </div>
+                          <div class="mb-3">
+                              <label for="taskDescription" class="form-label">Описание</label>
+                              <textarea class="form-control" id="taskDescription" name="description" rows="3" required></textarea>
+                          </div>
+                          <div class="mb-3">
+                              <label for="assignedTo" class="form-label">Назначить на</label>
+                              <select class="form-control" id="assignedTo" name="assigned_to">
+                                  <option value="">Не назначено</option>
+                                  {% for member in project.members.all %}
+                                      <option value="{{ member.id }}">{{ member.username }}</option>
+                                  {% endfor %}
+                              </select>
+                          </div>
+                          <div class="mb-3">
+                              <label for="taskDeadline" class="form-label">Дедлайн</label>
+                              <input type="datetime-local" class="form-control" id="taskDeadline" name="deadline">
+                          </div>
+                          <button type="submit" class="btn btn-primary" name="create_task">Создать задачу</button>
+                      </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% for task in tasks %}
+          <div class="task" >
+            <div class="task-info">
+              <span class="task-date-added">Добавлено: {{task.created_at}}</span>
+              <span class="task-status">{{task.status}}</span>
+            </div>
+            <p>{{task.title}}</p>
+            <button onclick="markTaskAsSent(this)">Выполнено</button>
+          </div>
+        {% endfor %}
+        
+      </div>
+
+      <div class="block" id="repository">
+        
+        <div class="flex-header">
+          <h2>Репозиторий</h2>
+          <button onclick="uploadFile()">Загрузить файл</button>
+        </div>
+        {% for file in repository %}
+          <div class="file-block">
+            <p>Файл 1.txt</p>
+            <button onclick="deleteFile(this)">Удалить файл</button>
+          </div>
+        {% endfor %}
+      </div>
+      {% if user.is_teacher %}
+        <div class="block" id="evaluate">
+          <h2>Оценить проект</h2>
+          <p>Заполните форму, если хотите завершить проект.</p>
+          
+          <label for="grade">Оценка:</label>
+          <select id="grade" required>
+            <option value="">Выберите оценку</option>
+            <option value="5">5</option>
+            <option value="4">4</option>
+            <option value="3">3</option>
+            <option value="na">н/а</option>
+          </select>
+        
+          <br><br><label for="team-comment">Комментарий для команды:</label><br><br>
+          <textarea id="team-comment" maxlength="1000" placeholder="Максимум 1000 символов"></textarea>
+        
+          <br><label for="personal-comment">Личный комментарий (его видите только вы):</label><br><br>
+          <textarea id="personal-comment" maxlength="1000" placeholder="Максимум 1000 символов"></textarea>
+        
+          <br><br><button onclick="submitEvaluation()">Оценить проект</button>
+        </div>
+      {% endif %}
+    </section>
+
+    </main>
+<script>
+    function showBlock(blockId) {
+      const blocks = document.querySelectorAll('.block');
+      blocks.forEach(block => {
+        block.style.display = (block.id === blockId) ? 'block' : 'none';
+      });
+
+      const projectTitle = document.querySelector('.project-title');
+      projectTitle.textContent = document.querySelector(`.navigation-item[onclick="showBlock('${blockId}')"]`).textContent;
+      
+    }
+    window.onload = function() {
+      showBlock('diagram');
+    }
+    function toggleDropdown() {
+      const dropdown = document.getElementById('avatar-dropdown');
+      dropdown.classList.toggle('show');
+    }
+    function submitEvaluation() {
+      const grade = document.getElementById('grade').value;
+      const teamComment = document.getElementById('team-comment').value;
+      const personalComment = document.getElementById('personal-comment').value;
+    
+      if (!grade) {
+        alert('Пожалуйста, выберите оценку.');
+        return;
+      }
+
+      alert('Форма успешно отправлена!');
+
+      disableProjectInteraction();
+      updateHeaderWithGrade(grade);
+    }
+    
+    function disableProjectInteraction() {
+      const buttons = document.querySelectorAll('button');
+      buttons.forEach(button => {
+        if (button.textContent !== 'Скачать файл') {
+          button.style.display = 'none';
+        }
+      });
+
+      const inputs = document.querySelectorAll('input, textarea');
+      inputs.forEach(input => {
+        input.disabled = true;
+      });
+
+      document.querySelectorAll('.block').forEach(block => {
+        block.style.pointerEvents = 'none';
+      });
+    }
+
+    function updateHeaderWithGrade(grade) {
+      const header = document.querySelector('.header');
+      header.style.backgroundColor = '#28a745';
+      const projectGrade = document.getElementById('project-grade');
+      projectGrade.textContent = `Оценка: ${grade}`;
+      projectGrade.style.display = 'inline';
+    }
+    function openModal() {
+      const modal = document.getElementById('customModal');
+      modal.style.display = 'block'; // Показываем модальное окно
+    }
+    
+    function closeModal() {
+      const modal = document.getElementById('customModal');
+      modal.style.display = 'none'; // Скрываем модальное окно
+    }
+    
+    // Отключение закрытия при клике вне окна
+    window.onclick = function (event) {
+      const modal = document.getElementById('customModal');
+      const modalDialog = document.querySelector('.modal-dialog');
+    
+      // Проверяем, был ли клик за пределами .modal-dialog
+      if (event.target === modal && !modalDialog.contains(event.target)) {
+        // Игнорируем клик (не закрываем окно)
+        return;
+      }
+    };
+</script>
+{% endblock %}

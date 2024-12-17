@@ -19,12 +19,12 @@ class SearchUserForm(forms.Form):
 class ApplicationForm(forms.ModelForm):
     class Meta:
         model = Application
-        fields = ['project_title', 'project_description', 'leader', 'supervisor']
+        fields = ['project_title', 'project_description', 'supervisor']  # Убрали поле 'leader'
 
     project_title = forms.CharField(label="Название проекта", max_length=255)
     project_description = forms.CharField(label="Описание проекта", widget=forms.Textarea)
-    leader = forms.ModelChoiceField(queryset=User.objects.filter(is_student=True), label="Лидер команды")
     supervisor = forms.ModelChoiceField(queryset=User.objects.filter(is_teacher=True), label="Руководитель проекта", required=False)
+
 
 class TeacherApplicationForm(forms.ModelForm):
     class Meta:

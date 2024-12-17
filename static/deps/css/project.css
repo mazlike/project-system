@@ -1,0 +1,619 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #0E0D18;
+  color: white;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1D1B32;
+  padding: 20px;
+  border-radius: 20px;
+  margin-top: 10px;
+  margin-left: 5px;
+  margin-right: 5px;
+  height: 5%;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+}
+
+.logo .home {
+  margin-left: 10px;
+  font-size: 20px;
+  color: white;
+}
+
+.project-title {
+  font-size: 20px;
+  margin-left: 10px;
+  color: white;
+}
+
+.project-grade {
+  font-size: 20px;
+  margin-left: 20px;
+  color: white;
+  display: none;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.username {
+  margin-right: 15px;
+}
+
+.avatar {
+  position: relative;
+  cursor: pointer;
+}
+
+.avatar-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: #292648;
+  border-radius: 10px;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.dropdown.show {
+  display: block;
+}
+
+.dropdown li {
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+
+.dropdown li:last-child {
+  border-bottom: none;
+}
+
+.dropdown li a {
+  color: white;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown li a:hover {
+  background-color: #38304E;
+}
+
+.main-content {
+  display: flex; 
+  height: 100%; 
+  padding: 20px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  box-sizing: border-box; 
+}
+
+.navigation {
+  background-color: #1D1B32;
+  width: 200px; 
+  padding: 20px;
+  border-radius: 20px;
+  margin-left: -15px;
+  height: 100%; 
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.content {
+  color: white;
+  flex-grow: 1; 
+  padding: 20px;
+  overflow-y: auto;
+  border-radius: 10px;
+  height: 100%; 
+  margin-bottom: 20px;
+  background-color: #151222;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.navigation-item {
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  display: block;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.navigation-item:hover {
+  background-color: #292648;
+}
+
+.block {
+  display: none;
+  padding: 10px; 
+  width: 100%;
+  flex-grow: 1;
+}
+
+.block h2 {
+  margin: 0; 
+  padding: 0; 
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
+
+#diagram {
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; 
+  align-items: center; 
+  padding: 20px; 
+}
+
+#diagram h2{
+  margin-top: -13px;
+  margin-left: -7px;
+}
+
+#diagram .image-upload {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%; 
+}
+
+#diagram #diagram-image {
+  width: 1300px;
+  height: 680px;
+  max-width: 100%;
+  margin-left: -30px;
+}
+
+#diagram input[type="file"] {
+  margin-top: auto; 
+  margin-bottom: 0; 
+  width: 100%; 
+  text-align: center;
+}
+
+#team {
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; 
+  align-items: center;
+  padding: 10px; 
+}
+
+#team .leave-project {
+  margin-top: auto; 
+  margin-bottom: 0; 
+  width: 500px; 
+  text-align: center; 
+  background-color: #49304e;
+}
+
+#team h2 {
+  margin: 0;
+  padding: 0; 
+}
+
+.team-member {
+  background-color: #38304E;
+  width: 1200px;
+  padding: 20px;
+  margin: 10px 0;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.team-member p {
+  font-size: 18px;
+}
+
+.team-member.leader {
+  background-color: #4b3e5e;
+}
+
+.leave-project {
+  width: 300px;
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.update {
+  background-color: #38304E;
+  width: 600px;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 10px;
+  text-align: justify;
+}
+
+.update p {
+  font-size: 18px;
+}
+
+.task {
+  display: flex;
+  flex-direction: column;
+  background-color: #38304E;
+  width: 90%;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.task-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.task-date-added {
+  font-size: 14px;
+  color: #ccc;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.task-status {
+  font-size: 14px;
+  color: #fff;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.task p {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.task .comment {
+  flex-grow: 1;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #2E2A3C;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  resize: none;
+}
+
+.task button {
+  align-self: flex-start;
+}
+
+.file-block {
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  background-color: #2E2A3C;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 10px;
+  width: 90%;
+}
+
+.file-block p {
+  font-size: 18px;
+  margin-right: 20px; 
+}
+
+.file-block .comment {
+  flex-grow: 1; 
+  margin-left: 20px; 
+  padding: 10px;
+  background-color: #38304E;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  resize: none; 
+}
+
+button {
+  background-color: #292648;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+button:hover {
+  background-color: #38304E;
+}
+
+button:disabled {
+  background-color: #38304E;
+  cursor: not-allowed;
+}
+
+.create-task {
+  display: flex;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background-color: #292648;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.block button{
+  margin-top: 0px;
+}
+
+#evaluate {
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+}
+
+#evaluate h2 {
+  margin-bottom: 20px;
+}
+
+#evaluate p {
+  margin-bottom: 20px;
+}
+
+#evaluate label {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+#evaluate select,
+#evaluate textarea {
+  width: 70%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #444;
+  background-color: #2E2A3C;
+  color: white;
+  font-size: 16px;
+}
+
+#evaluate select {
+  width: auto;
+}
+
+#evaluate button {
+  background-color: #49304e;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+#evaluate button:hover {
+  background-color: #38304E;
+}
+
+
+/* Основной стиль модального окна */
+.modal {
+  display: none; /* Скрыто по умолчанию */
+  position: fixed;
+  z-index: 1050;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон */
+}
+
+/* Центрирование модального окна */
+.modal-dialog {
+  position: relative;
+  margin: 1.75rem auto;
+  max-width: 500px;
+  pointer-events: none;
+}
+.modal-dialog-centered {
+  display: flex;
+  align-items: center; /* Центровка по вертикали */
+  min-height: calc(100% - 1rem); /* Высота окна с небольшим отступом */
+}
+.modal-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: #38304E;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 0.3rem;
+  outline: 0;
+  pointer-events: auto;
+  max-height: 90vh; /* Максимальная высота модального окна */
+  overflow: hidden; /* Скрываем содержимое, выходящее за пределы */
+}
+
+.modal-header,
+.modal-footer {
+  padding: 1rem;
+  border-bottom: 1px solid #38304E;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.modal-body {
+  position: relative;
+  flex: 1 1 auto;
+  padding: 1rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #38304E;
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.btn-close:hover {
+  color: #ff0000;
+}
+
+.modal.fade .modal-dialog {
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out; /* Анимация появления */
+  transform: translate(0, -50px); /* Начальное смещение вверх */
+  opacity: 0; /* Прозрачность */
+}
+
+.modal.show .modal-dialog {
+  transform: translate(0, 0); /* Возврат в исходное положение */
+  opacity: 1; /* Появление */
+}
+
+.flex-header {
+  display: flex; /* Включаем flexbox */
+  align-items: center; /* Выравниваем элементы по вертикали */
+  gap: 1rem; /* Добавляем расстояние между элементами */
+}
+
+.messages {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000; /* чтобы уведомления отображались поверх всего */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: auto;
+  max-width: 80%;
+  text-align: center;
+}
+
+.messages li {
+  background-color: rgba(0, 0, 0, 0.8); /* темный фон */
+  color: white; /* белый текст */
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  font-size: 16px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.messages li.success {
+  background-color: #4caf50; /* зеленый для успеха */
+}
+
+.messages li.error {
+  background-color: #f44336; /* красный для ошибок */
+}
+
+.messages li.warning {
+  background-color: #ff9800; /* оранжевый для предупреждений */
+}
+
+.messages li.info {
+  background-color: #2196f3; /* синий для информации */
+}   
+
+/* Общие стили для формы */
+.mb-3 {
+  margin-bottom: 1rem; /* Отступ снизу */
+}
+
+.form-label {
+  font-weight: bold; /* Жирный текст для лейблов */
+  margin-bottom: 0.5rem; /* Отступ снизу */
+}
+
+.form-control {
+  display: block; /* Блочный элемент */
+  width: 79%; /* Ширина на всю ширину контейнера */
+  padding: 0.375rem 0.75rem; /* Внутренние отступы */
+  font-size: 1rem; /* Размер шрифта */
+  line-height: 1.5; /* Высота строки */
+  color: #fff; /* Цвет текста */
+  background-color: #38304E; /* Цвет фона */
+  background-clip: padding-box; /* Обрезка фона по границе padding */
+  border: 1px solid #ced4da; /* Граница */
+  border-radius: 0.25rem; /* Скругление углов */
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* Анимация */
+}
+
+.form-control:focus {
+  border-color: #2e2741; /* Цвет границы при фокусе */
+  outline: 0; /* Убираем стандартный outline */
+  box-shadow: 0 0 0 0.2rem #1e1a2b; /* Тень при фокусе */
+}
+
+.form-control:disabled,
+.form-control[readonly] {
+  background-color: #e9ecef; /* Цвет фона для disabled или readonly */
+  opacity: 1; /* Прозрачность */
+}
+
+textarea.form-control {
+  height: auto; /* Автоматическая высота для textarea */
+}
+
+select.form-control {
+  height: calc(1.5rem + 2px); /* Фиксированная высота для select */
+}
+
+/* Стили для select */
+select.form-control:not([size]):not([multiple]) {
+  height: calc(2.25rem + 2px); /* Фиксированная высота для select */
+}
+
+/* Стили для datetime-local */
+input[type="datetime-local"].form-control {
+  height: calc(1.25rem + 1px); /* Фиксированная высота */
+}

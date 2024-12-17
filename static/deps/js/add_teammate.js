@@ -1,104 +1,142 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const maxTeamMembers = 4; // Максимальное количество участников
-    const container = document.getElementById('team-members-container');
-    const addButton = document.getElementById('add-team-member');
-    let counter = 1;
+    const teamMembersContainer = document.querySelectorAll('.team-members-container');
 
-    // Функция для добавления нового поля ввода
-    function addTeamMemberInput() {
-        if (counter >= maxTeamMembers) {
-            addButton.disabled = true;
-            return;
-        }
-        const newInput = document.createElement('div');
-        newInput.className = 'team-member-input';
-        newInput.innerHTML = `
-            <input type="text" class="team-member-autocomplete" name="team_members_input_${counter}" placeholder="Введите username">
-            <span class="remove-member" onclick="removeMember(this)">✖</span>
-        `;
-        container.appendChild(newInput);
-        counter++;
+    teamMembersContainer.forEach(container => {
+        const inputField = container.querySelector('.team-member-autocomplete');
+        const confirmButton = container.querySelector('.confirm-member');
+        const teamMembersList = container.querySelector('#team-members-list');
+        const leaderSelect = document.querySelector(`#leader-select-${container.id.split('-').pop()}`);
+        const hiddenField = document.createElement('input');
+        hiddenField.type = 'hidden';
+        hiddenField.name = 'team_members_input';
+        container.appendChild(hiddenField);
 
-        // Добавляем обработчик для нового поля
-        const newField = newInput.querySelector('.team-member-autocomplete');
-        setupAutocomplete(newField);
-    }
+        confirmButton.addEventListener('click', function () {
+            const username = inputField.value.trim();
 
-    // Обработчик нажатия на кнопку "Добавить участника"
-    addButton.addEventListener('click', addTeamMemberInput);
+            // Проверяем, существует ли уже такой участник
+            const existingUsernames = Array.from(teamMembersList.children).map(item => 
+                item.textContent.replace('×', '').trim()
+            );
 
-    // Функция для настройки автодополнения для поля
-    function setupAutocomplete(field) {
-        field.addEventListener('input', function () {
-            const query = this.value;
-            fetchUsers(query, function (results) {
-                // Отобразить результаты в выпадающем списке
-                const dropdown = document.createElement('ul');
-                dropdown.className = 'autocomplete-dropdown';
-                dropdown.style.position = 'absolute';
-                dropdown.style.backgroundColor = '#38304e';
-                dropdown.style.border = '1px solid #ccc';
-                dropdown.style.listStyle = 'none';
-                dropdown.style.padding = '0';
-                dropdown.style.margin = '0';
-                dropdown.style.width = field.offsetWidth + 'px';
-                dropdown.style.zIndex = '1000';
+            if (!username) {
+                alert('Введите имя пользователя.');
+                return;
+            }
 
-                // Очищаем предыдущий выпадающий список, если он есть
-                const oldDropdown = field.parentElement.querySelector('.autocomplete-dropdown');
-                if (oldDropdown) oldDropdown.remove();
+            if (existingUsernames.includes(username)) {
+                alert('Этот пользователь уже добавлен в команду.');
+                return;
+            }
 
-                // Добавляем результаты в выпадающий список
-                results.forEach(result => {
-                    const item = document.createElement('li');
-                    item.textContent = result.username;
-                    item.style.padding = '5px';
-                    item.style.cursor = 'pointer';
-                    item.addEventListener('click', function () {
-                        field.value = result.username; // Выбираем значение
-                        dropdown.remove(); // Убираем выпадающий список
-                    });
-                    dropdown.appendChild(item);
-                });
+            // Добавляем в список участников
+            const listItem = document.createElement('li');
+            listItem.textContent = username;
 
-                // Добавляем выпадающий список к полю ввода
-                field.parentElement.appendChild(dropdown);
+            // Кнопка для удаления участника
+            const removeButton = document.createElement('button');
+            removeButton.textContent = '×';
+            removeButton.addEventListener('click', function () {
+                listItem.remove();
+                updateTeamMembers();
             });
+
+            listItem.appendChild(removeButton);
+            teamMembersList.appendChild(listItem);
+
+            // Добавляем участника в select лидера
+            const option = document.createElement('option');
+            option.value = username;
+            option.textContent = username;
+            leaderSelect.appendChild(option);
+
+            updateTeamMembers();
+            inputField.value = ''; // Очищаем поле ввода
         });
-    }
 
-    // Функция для отправки AJAX-запроса на сервер
-    function fetchUsers(query, callback) {
-        if (query.length < 3) {
-            callback([]); // Если введено меньше 3 символов, не отправляем запрос
-            return;
-        }
-        fetch(`/search-users/?query=${query}`)
-            .then(response => response.json())
-            .then(data => callback(data))
-            .catch(error => {
-                console.error('Ошибка при выполнении AJAX-запроса:', error);
-                callback([]);
+        function updateTeamMembers() {
+            // Собираем всех участников из списка
+            const usernames = Array.from(teamMembersList.children).map(item =>
+                item.textContent.replace('×', '').trim()
+            );
+            hiddenField.value = usernames.join(',');
+
+            // Удаляем отсутствующих участников из select лидера
+            Array.from(leaderSelect.options).forEach(option => {
+                if (option.value && !usernames.includes(option.value)) {
+                    option.remove();
+                }
             });
-    }
 
-    // Настройка автодополнения для существующих полей
-    const existingFields = document.querySelectorAll('.team-member-autocomplete');
-    existingFields.forEach(field => setupAutocomplete(field));
-    // Функция для удаления участника
-    window.removeMember = function (element) {
-        const inputContainer = element.parentElement; // Родительский элемент (div с классом .team-member-input)
-        inputContainer.remove(); // Удаляем весь контейнер с полем и иконкой удаления
-        counter--; // Уменьшаем счетчик
-        addButton.disabled = false; // Включаем кнопку "Добавить участника", если было достигнуто максимальное количество участников
-    };
-});
-document.querySelector('form').addEventListener('submit', function (event) {
-    const teamMemberInputs = document.querySelectorAll('.team-member-autocomplete');
-    teamMemberInputs.forEach(input => {
-        if (!input.value.trim()) {
-            // Если поле пустое, удаляем его из формы
-            input.remove();
+            // Добавляем новых участников в select лидера
+            usernames.forEach(username => {
+                if (!Array.from(leaderSelect.options).some(option => option.value === username)) {
+                    const newOption = document.createElement('option');
+                    newOption.value = username;
+                    newOption.textContent = username;
+                    leaderSelect.appendChild(newOption);
+                }
+            });
         }
     });
+
+        // Найти все поля ввода с автозаполнением
+    const autoCompleteFields = document.querySelectorAll('.team-member-autocomplete');
+
+    // Шаблон dropdown-а
+    const dropdownTemplate = document.getElementById('autocomplete-dropdown-template');
+
+    // Создайте обработчик для каждой формы
+    autoCompleteFields.forEach(inputField => {
+        let dropdown = dropdownTemplate.content.cloneNode(true).querySelector('.autocomplete-dropdown');
+        
+        // Обработчик ввода
+        inputField.addEventListener('input', function () {
+            const query = inputField.value.trim();
+            
+            if (query.length > 1) { // Выполняем запрос только если введено больше 1 символа
+                fetch(`/search-students/?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Очистить предыдущие результаты
+                        dropdown.querySelector('.autocomplete-items').innerHTML = '';
+                        dropdown.style.display = 'block'; // Показать dropdown
+
+                        // Отобразить результаты
+                        data.forEach(user => {
+                            const option = document.createElement('div');
+                            option.className = 'autocomplete-item';
+                            option.textContent = user.username;
+
+                            // Добавляем обработчик клика для выбора пользователя
+                            option.addEventListener('click', function () {
+                                inputField.value = user.username; // Установить выбранное имя
+                                dropdown.querySelector('.autocomplete-items').innerHTML = ''; // Очистить dropdown
+                                dropdown.style.display = 'none'; // Скрыть dropdown
+                            });
+
+                            dropdown.querySelector('.autocomplete-items').appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        console.error('Ошибка загрузки данных:', error);
+                    });
+            } else {
+                dropdown.querySelector('.autocomplete-items').innerHTML = ''; // Очистить dropdown, если ввод слишком короткий
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // Закрыть dropdown, если пользователь кликнул за его пределами
+        document.addEventListener('click', function (event) {
+            if (!dropdown.contains(event.target) && event.target !== inputField) {
+                dropdown.querySelector('.autocomplete-items').innerHTML = '';
+                dropdown.style.display = 'none';
+            }
+        });
+
+        // Добавление dropdown в DOM после каждого input поля
+        inputField.parentNode.appendChild(dropdown);
+    });
+
 });

@@ -108,16 +108,16 @@ class ProfileView(LoginRequiredMixin, DetailView):
             if form.is_valid():
                 application = form.save(commit=False)
                 application.applicant = request.user
-
-                # Обработка участников команды
-                team_members = []
-                for i in range(1, 5):  # Максимум 4 участника
-                    username = request.POST.get(f'team_members_input_{i}', None)
-                    if username:
-                        user = User.objects.filter(username=username).first()
-                        if user:
-                            team_members.append(user)
-
+                
+                # Получаем данные из js
+                leader_username = request.POST.get('leader_input')
+                team_members_usernames = request.POST.getlist('team_members_input')
+                
+                # Находим лидера и участников команды
+                leader = User.objects.filter(username=leader_username).first()
+                team_members = User.objects.filter(username__in=team_members_usernames)
+                application.leader = leader
+                
                 application.save()
                 application.team_members.set(team_members)  # Сохраняем участников команды
                 
@@ -130,7 +130,7 @@ class ProfileView(LoginRequiredMixin, DetailView):
         elif 'approve_application' in request.POST:
             application_id = request.POST.get('application_id')
             application = get_object_or_404(Application, id=application_id)
-
+            
             if application.supervisor != request.user:
                 messages.error(request, 'У вас нет прав на выполнение этого действия.')
                 return redirect('users:profile', username=self.request.user.username)
@@ -155,14 +155,51 @@ class ProfileView(LoginRequiredMixin, DetailView):
         elif 'apply_for_application' in request.POST:
             application_id = request.POST.get('application_id')
             teacher_application = get_object_or_404(TeacherApplication, id=application_id)
+
+            # Получаем данные из формы
+            leader_username = request.POST.get('leader_input')
+            team_members_usernames = request.POST.getlist('team_members_input')
+            
+            # Проверяем, указан ли лидер
+            if not leader_username:
+                messages.error(request, 'Пожалуйста, укажите лидера команды.')
+                return redirect('users:profile', username=request.user.username)
+
+            # Проверяем, указаны ли участники
+            if not team_members_usernames:
+                messages.error(request, 'Пожалуйста, добавьте хотя бы одного участника команды.')
+                return redirect('users:profile', username=request.user.username)
+            print(request.POST)
+
+            # Находим лидера и участников команды
+            leader = User.objects.filter(username=leader_username).first()
+            team_members = User.objects.filter(username__in=team_members_usernames)
+            print(team_members)
+            if not team_members.exists():
+                messages.error(request, 'Не удалось найти участников команды.')
+                return redirect('users:profile', username=request.user.username)
+            
+            # Создаем заявку
             student_application = Application.objects.create(
                 applicant=request.user,
                 project_title=teacher_application.title,
                 project_description=teacher_application.description,
                 supervisor=teacher_application.created_by,
-                leader=request.user,
+                leader=leader
             )
+            student_application.team_members.set(team_members)
+
             messages.success(request, 'Заявка на проект успешно отправлена.')
+            return redirect('users:profile', username=request.user.username)
+        elif 'delete_application' in request.POST:
+            application_id = request.POST.get('application_id')
+            if request.user.is_teacher:
+                application = get_object_or_404(TeacherApplication, id=application_id, created_by=request.user)
+            else:
+                application = get_object_or_404(Application, id=application_id, applicant=request.user)
+
+            application.delete()
+            messages.success(request, 'Заявка успешно удалена.')
             return redirect('users:profile', username=request.user.username)
         return super().post(request, *args, **kwargs)
     

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Проект: Мои проекты</title>
+  <link rel="stylesheet" href="project.css">
+</head>
+<body>
+  <header class="header">
+    <a href="home.html" class="logo">
+        <img src="logo.jpg" alt="logo" class="avatar-img">
+        <span class="home">Home</span>
+        <span class="project-title">Проект 1</span>
+        <span class="project-grade" id="project-grade"></span>
+    </a>
+    <div class="user-info">
+      <span class="username">Имя пользователя</span>
+      <div class="avatar" onclick="toggleDropdown()">
+        <img src="logo.jpg" alt="Avatar" class="avatar-img">
+        <ul id="avatar-dropdown" class="dropdown">
+          <li><a href="#">Настройки</a></li>
+          <li><a href="#">Выход</a></li>
+        </ul>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <nav class="navigation">
+      <div class="navigation-item" onclick="showBlock('diagram')">Диаграмма</div>
+      <div class="navigation-item" onclick="showBlock('team')">Команда</div>
+      <div class="navigation-item" onclick="showBlock('updates')">Последние обновления</div>
+      <div class="navigation-item" onclick="showBlock('tasks')">Задачи</div>
+      <div class="navigation-item" onclick="showBlock('repository')">Репозиторий</div>
+      <div class="navigation-item teacher-only" onclick="showBlock('evaluate')">Оценить проект</div>
+    </nav>
+
+    <section class="content student-content" id="student-content">
+      <div class="block" id="diagram">
+        <h2>Диаграмма проекта</h2><br>
+        <div class="image-upload">
+          <img id="diagram-image" src="logo.jpg" alt="Диаграмма проекта"><br>
+        </div>
+        <br><input type="file" id="upload-diagram" onchange="uploadDiagram(event)">
+      </div>
+      
+      <div class="block" id="team">
+        <h2>Команда проекта</h2><br>
+        <div class="team-member leader">
+          <p>Иван Иванов</p>
+        </div>
+        <div class="team-member student">
+          <p>Мария Петрова</p>
+        </div>
+        <div class="team-member student">
+          <p>Алексей Смирнов</p>
+        </div>
+        <button class="leave-project" onclick="leaveProject()">Уйти из проекта</button>
+      </div>
+
+      <div class="block" id="updates">
+        <h2>Последние обновления</h2>
+        <div class="update">
+          <p>Обновление 1: Добавлен новый файл в репозиторий.</p>
+        </div>
+      </div>
+
+      <div class="block" id="tasks">
+        <h2>Задачи</h2>
+        <div class="task">
+          <div class="task-info">
+            <span class="task-date-added">Добавлено: 2023-10-01</span>
+            <span class="task-status">Не выполнено</span>
+          </div>
+          <p>Задача 1: Сделать анализ данных</p>
+          <button onclick="markTaskAsSent(this)">Выполнено</button>
+        </div>
+        <div class="task">
+          <div class="task-info">
+            <span class="task-date-added">Добавлено: 2023-10-02</span>
+            <span class="task-status">Не выполнено</span>
+          </div>
+          <p>Задача 2: Разработать диаграмму</p>
+          <button onclick="markTaskAsSent(this)">Выполнено</button>
+        </div>
+      </div>
+
+      <div class="block" id="repository">
+        <h2>Репозиторий</h2>
+        <div class="repo-actions">
+          <button onclick="uploadFile()">Загрузить файл</button>
+        </div>
+        <div class="file-block">
+          <p>Файл 1.txt</p>
+          <button onclick="deleteFile(this)">Удалить файл</button>
+        </div>
+        <div class="file-block">
+          <p>Файл 2.txt</p>
+          <button onclick="deleteFile(this)">Удалить файл</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="content teacher-content" id="teacher-content">
+      <div class="block" id="diagram">
+        <h2>Диаграмма проекта</h2><br>
+        <div class="image-upload">
+          <img id="diagram-image" src="logo.jpg" alt="Диаграмма проекта"><br>
+        </div>
+      </div>
+
+      <div class="block" id="team">
+        <h2>Команда проекта</h2><br>
+        <div class="team-member leader">
+          <p>Иван Иванов</p>
+        </div>
+        <div class="team-member student">
+          <p>Мария Петрова</p>
+        </div>
+        <div class="team-member student">
+          <p>Алексей Смирнов</p>
+        </div>
+      </div>
+      
+      <div class="block" id="updates">
+        <h2>Последние обновления</h2>
+        <div class="update">
+          <p>Обновление 1: Добавлен новый файл в репозиторий.</p>
+        </div>
+      </div>
+
+      <div class="block" id="tasks">
+        <h2>Задачи</h2>
+        <button class="create-task" onclick="createTask()">Создать задачу</button>
+        <div class="task">
+          <div class="task-info">
+            <span class="task-date-added">Добавлено: 2023-10-01</span>
+            <span class="task-status">Не выполнено</span>
+          </div>
+          <p>Задача 1: Сделать анализ данных</p>
+          <textarea class="comment" placeholder="Комментарий"></textarea>
+          <button onclick="markTaskAsSent(this)">Выполнено</button>
+        </div>
+        <div class="task">
+          <div class="task-info">
+            <span class="task-date-added">Добавлено: 2023-10-02</span>
+            <span class="task-status">Не выполнено</span>
+          </div>
+          <p>Задача 2: Разработать диаграмму</p>
+          <textarea class="comment" placeholder="Комментарий"></textarea>
+          <button onclick="markTaskAsSent(this)">Выполнено</button>
+        </div>
+      </div>
+
+      <div class="block" id="repository">
+        <h2>Репозиторий</h2>
+        <div class="file-block">
+          <p>Файл 1.txt</p>
+          <button onclick="deleteFile(this)">Удалить файл</button>
+          <textarea class="comment" placeholder="Комментарий"></textarea>
+        </div>
+        <div class="file-block">
+          <p>Файл 2.txt</p>
+          <button onclick="deleteFile(this)">Удалить файл</button>
+          <textarea class="comment" placeholder="Комментарий"></textarea>
+        </div>
+      </div>
+      <div class="block" id="evaluate">
+        <h2>Оценить проект</h2>
+        <p>Заполните форму, если хотите завершить проект.</p>
+        
+        <label for="grade">Оценка:</label>
+        <select id="grade" required>
+          <option value="">Выберите оценку</option>
+          <option value="5">5</option>
+          <option value="4">4</option>
+          <option value="3">3</option>
+          <option value="na">н/а</option>
+        </select>
+      
+        <br><br><label for="team-comment">Комментарий для команды:</label><br><br>
+        <textarea id="team-comment" maxlength="1000" placeholder="Максимум 1000 символов"></textarea>
+      
+        <br><label for="personal-comment">Личный комментарий (его видите только вы):</label><br><br>
+        <textarea id="personal-comment" maxlength="1000" placeholder="Максимум 1000 символов"></textarea>
+      
+        <br><br><button onclick="submitEvaluation()">Оценить проект</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function showContent(userRole) {
+      if (userRole === 'student') {
+        document.getElementById('student-content').style.display = 'block';
+        document.getElementById('teacher-content').style.display = 'none';
+        document.querySelectorAll('.teacher-only').forEach(item => item.style.display = 'none');
+      } else if (userRole === 'teacher') {
+        document.getElementById('student-content').style.display = 'none';
+        document.getElementById('teacher-content').style.display = 'block';
+        document.querySelectorAll('.teacher-only').forEach(item => item.style.display = 'block');
+      }
+    }
+
+    showContent('teacher'); 
+
+    function toggleDropdown() {
+      const dropdown = document.getElementById('avatar-dropdown');
+      dropdown.classList.toggle('show');
+    }
+
+    function showBlock(blockId) {
+      const blocks = document.querySelectorAll('.block');
+      blocks.forEach(block => {
+        block.style.display = (block.id === blockId) ? 'block' : 'none';
+      });
+
+      const projectTitle = document.querySelector('.project-title');
+      projectTitle.textContent = document.querySelector(`.navigation-item[onclick="showBlock('${blockId}')"]`).textContent;
+    }
+
+    function uploadDiagram(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('diagram-image').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function uploadFile() {
+      alert("Файл загружен!");
+    }
+
+    function deleteFile(button) {
+      button.parentElement.remove();
+    }
+
+    function leaveProject() {
+      alert("Вы покинули проект.");
+    }
+
+    function markTaskAsSent(button) {
+      const task = button.parentElement;
+      const status = task.querySelector(".task-status");
+      status.textContent = "Отправлено, " + new Date().toLocaleDateString();
+      status.style.color = "yellow";
+      button.style.display = "none";
+      const message = document.createElement("p");
+      message.textContent = "Задача отправлена на рассмотрение";
+      task.appendChild(message);
+    }
+
+    window.onload = function() {
+      showBlock('diagram');
+    }
+
+    function submitEvaluation() {
+      const grade = document.getElementById('grade').value;
+      const teamComment = document.getElementById('team-comment').value;
+      const personalComment = document.getElementById('personal-comment').value;
+    
+      if (!grade) {
+        alert('Пожалуйста, выберите оценку.');
+        return;
+      }
+
+      alert('Форма успешно отправлена!');
+
+      disableProjectInteraction();
+      updateHeaderWithGrade(grade);
+    }
+    
+    function disableProjectInteraction() {
+      const buttons = document.querySelectorAll('button');
+      buttons.forEach(button => {
+        if (button.textContent !== 'Скачать файл') {
+          button.style.display = 'none';
+        }
+      });
+
+      const inputs = document.querySelectorAll('input, textarea');
+      inputs.forEach(input => {
+        input.disabled = true;
+      });
+
+      document.querySelectorAll('.block').forEach(block => {
+        block.style.pointerEvents = 'none';
+      });
+    }
+
+    function updateHeaderWithGrade(grade) {
+      const header = document.querySelector('.header');
+      header.style.backgroundColor = '#28a745';
+      const projectGrade = document.getElementById('project-grade');
+      projectGrade.textContent = `Оценка: ${grade}`;
+      projectGrade.style.display = 'inline';
+    }
+
+    function createTask() {
+      const tasksBlock = document.getElementById('tasks');
+
+      const newTask = document.createElement('div');
+      newTask.className = 'task';
+    
+      const dateAdded = new Date().toLocaleDateString();
+      newTask.innerHTML = `
+        <div class="task-info">
+          <span class="task-date-added">Добавлено: ${dateAdded}</span>
+          <span class="task-status">Не выполнено</span>
+        </div>
+        <p>Новая задача</p>
+        <textarea class="comment" placeholder="Комментарий"></textarea>
+        <button onclick="markTaskAsSent(this)">Выполнено</button>
+      `;
+    
+      tasksBlock.appendChild(newTask);
+    }
+  </script>
+</body>
+</html>
