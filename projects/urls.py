@@ -5,5 +5,6 @@ from projects import views
 app_name = 'projects'
 
 urlpatterns = [
-    path('project/<int:id>',views.ProjectView.as_view(), name='project'),
+    path('project/<uuid:uuid>',views.ProjectView.as_view(), name='project'),
+    path('project/<uuid:project_uuid>/download/<int:file_id>/', views.download_file, name='download_file'),
 ]

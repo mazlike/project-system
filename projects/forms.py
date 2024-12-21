@@ -23,7 +23,7 @@ class ApplicationForm(forms.ModelForm):
 
     project_title = forms.CharField(label="Название проекта", max_length=255)
     project_description = forms.CharField(label="Описание проекта", widget=forms.Textarea)
-    supervisor = forms.ModelChoiceField(queryset=User.objects.filter(is_teacher=True), label="Руководитель проекта", required=False)
+    supervisor = forms.ModelChoiceField(queryset=User.objects.filter(is_teacher=True), label="Руководитель проекта", required=True)
 
 
 class TeacherApplicationForm(forms.ModelForm):

@@ -20,7 +20,9 @@ html, body {
   margin-right: 5px;
   height: 5%;
 }
-
+.header-evaluated {
+  background-color: #10491e; /* Зеленый цвет */
+}
 .logo {
   display: flex;
   align-items: center;
@@ -37,6 +39,11 @@ html, body {
 }
 
 .project-title {
+  font-size: 20px;
+  margin-left: 10px;
+  color: white;
+}
+.evaluation {
   font-size: 20px;
   margin-left: 10px;
   color: white;
@@ -79,10 +86,12 @@ html, body {
   list-style-type: none;
   padding: 0;
   margin: 0;
+  
 }
 
 .dropdown.show {
   display: block;
+  min-height: 5em;
 }
 
 .dropdown li {
@@ -137,6 +146,8 @@ html, body {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  box-sizing: border-box; /* Учитывает padding и border в общей высоте */
+  padding-bottom: 5%;
 }
 
 .navigation-item {
@@ -157,6 +168,7 @@ html, body {
   padding: 10px; 
   width: 100%;
   flex-grow: 1;
+  box-sizing: border-box; /* Учитывает padding и border в общей высоте */
 }
 
 .block h2 {
@@ -270,7 +282,10 @@ html, body {
   border-radius: 10px;
   position: relative;
 }
-
+/* Градиент для задач, где is_necessary == True */
+.task.necessary {
+    background: linear-gradient(135deg, #38304E 75%, #f3a405c9); /* Градиент */
+}
 .task-info {
   display: flex;
   justify-content: space-between;
@@ -290,16 +305,39 @@ html, body {
   font-size: 14px;
   color: #fff;
   position: absolute;
+  min-height: 1.45em;
+  min-width: 130px;
   top: 10px;
   right: 10px;
+  border-radius: 5px;
+  padding: 2px;
+  text-align: center;
+}
+.status-completed {
+  background-color: #d4edda; /* Зелёный фон */
+  color: #155724;            /* Тёмно-зелёный текст */
 }
 
+.status-in-progress {
+  background-color: #fff3cd; /* Жёлтый фон */
+  color: #856404;            /* Тёмно-жёлтый текст */
+}
+
+.status-pending {
+  background-color: #f8d7da; /* Красный фон */
+  color: #721c24;            /* Тёмно-красный текст */
+}
+.status-requires-verification {
+  background-color: #cce5ff; /* Голубой фон */
+  color: #004085;            /* Тёмно-синий текст */
+}
 .task p {
   font-size: 18px;
   margin-bottom: 10px;
 }
 
 .task .comment {
+  width: 95% ;
   flex-grow: 1;
   margin-bottom: 20px;
   padding: 10px;
@@ -310,10 +348,44 @@ html, body {
   resize: none;
 }
 
-.task button {
+.btn {
   align-self: flex-start;
+  background-color: #2d2447;
+}
+.btn:hover {
+  background-color: #2E2A3C;
 }
 
+.create-note-btn {
+  position: absolute; /* Абсолютное позиционирование */
+  bottom: 15%; /* Отступ снизу */
+  left: 91%; /* Отступ слева */
+  padding: 10px 20px;
+  background-color: #2d2447;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.create-note-btn:hover {
+  background-color: #2E2A3C;
+}
+
+.notes-btn {
+  position: absolute; /* Абсолютное позиционирование */
+  bottom: 15%; /* Отступ снизу */
+  left: 81%; /* Отступ слева */
+  padding: 10px 20px;
+  background-color: #2d2447;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.notes-btn:hover {
+  background-color: #2E2A3C;
+}
 .file-block {
   display: flex; 
   justify-content: space-between; 
@@ -488,6 +560,7 @@ button:disabled {
   position: relative;
   flex: 1 1 auto;
   padding: 1rem;
+  overflow-y: auto;
 }
 
 .modal-footer {
@@ -506,7 +579,7 @@ button:disabled {
 .btn-close:hover {
   color: #ff0000;
 }
-
+.btn
 .modal.fade .modal-dialog {
   transition: transform 0.3s ease-out, opacity 0.3s ease-out; /* Анимация появления */
   transform: translate(0, -50px); /* Начальное смещение вверх */
@@ -583,7 +656,7 @@ button:disabled {
   color: #fff; /* Цвет текста */
   background-color: #38304E; /* Цвет фона */
   background-clip: padding-box; /* Обрезка фона по границе padding */
-  border: 1px solid #ced4da; /* Граница */
+  border: 1px solid #1e1924; /* Граница */
   border-radius: 0.25rem; /* Скругление углов */
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* Анимация */
 }
@@ -616,4 +689,172 @@ select.form-control:not([size]):not([multiple]) {
 /* Стили для datetime-local */
 input[type="datetime-local"].form-control {
   height: calc(1.25rem + 1px); /* Фиксированная высота */
+}
+
+ul {
+  list-style-type: none; /* Убирает точки у списка */
+  padding-left: 0; /* Убирает отступ слева */
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  overflow-y: auto;
+}
+.note-content {
+  margin-top: 30px; /* Добавляем отступ сверху, чтобы текст не перекрывался */
+}
+.note-left {
+  align-self: flex-start; /* Заметка слева */
+  background-color: #2d2447; /* Цвет фона для заметки слева */
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  max-width: 60%; /* Ограничиваем ширину заметки */
+  position: relative;
+  min-height: 50px;
+}
+
+.note-right {
+  align-self: flex-end; /* Заметка справа */
+  background-color: #2d2447; /* Цвет фона для заметки справа */
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  max-width: 60%; /* Ограничиваем ширину заметки */
+  position: relative;
+  min-height: 50px;
+}
+.note-category {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.note-left .note-category {
+  background-color: #ffc933; /* Исправление */
+}
+
+.note-right .note-category {
+  background-color: #33c1ff; /* Обратная связь */
+}
+
+.note-category.commendation {
+  background-color: #208035; /* Похвала */
+}
+
+.note-category.criticism {
+  background-color: #ff3333; /* Похвала */
+}
+/* Основной контейнер */
+.file-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Автоматическая сетка с минимальной шириной 250px */
+  gap: 20px; /* Отступы между элементами */
+  padding: 20px;
+}
+
+/* Карточка для каждого файла */
+.file-card {
+  background-color: #38304E;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.file-card.necessary-task {
+  background: linear-gradient(135deg, #38304E 75%, #f3a405c9);
+}
+.file-card:hover {
+  transform: translateY(-5px); /* Легкий подъём при наведении */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Заголовок файла */
+.file-card h5 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Ссылка на файл */
+.file-card a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.file-card a:hover {
+  text-decoration: underline;
+}
+
+/* Метаданные файла */
+.file-card small {
+  display: block;
+  margin-top: 10px;
+  color: #999393;
+  font-size: 14px;
+}
+
+/* Сообщение, если файлов нет */
+.no-files {
+  text-align: center;
+  font-size: 16px;
+  color: #888;
+  padding: 20px;
+}
+
+.disabled {
+  pointer-events: none; /* Отключает взаимодействие */
+  opacity: 0.5; /* Уменьшает видимость элемента */
+  cursor: not-allowed; /* Меняет курсор на "не разрешено" */
+}
+
+.list-group {
+  margin-bottom: 0;
+  overflow-y: auto;
+}
+
+.list-group-item {
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  padding: 15px;
+  background-color: #1e1924;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.commit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.commit-hash {
+  color: #0366d6;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+.commit-date {
+  color: #586069;
+  font-size: 12px;
+}
+
+.commit-details {
+  font-size: 14px;
+  color: #c7c7c7;
+}
+
+.commit-details strong {
+  color: #8b7979;
 }

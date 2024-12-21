@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Application, Project, TeacherApplication
+from .models import Application, Evaluation, Project, TeacherApplication
 
 @admin.register(TeacherApplication)
 class TeacherApplicationAdmin(admin.ModelAdmin):
@@ -47,7 +47,12 @@ class ApplicationAdmin(admin.ModelAdmin):
             'fields': ('status',)
         }),
     )
-
+# Встроенный класс для модели Evaluation
+class EvaluationInline(admin.TabularInline):  # Или admin.StackedInline, если нужен другой стиль
+    model = Evaluation
+    extra = 1  # Количество пустых форм для добавления новых оценок
+    readonly_fields = ('created_at',)  # Поля, которые нельзя редактировать
+    
 # Регистрация модели Project
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
@@ -64,3 +69,5 @@ class ProjectAdmin(admin.ModelAdmin):
             'fields': ('leader', 'members')
         }),
     )
+    # Добавляем встроенный класс
+    inlines = [EvaluationInline]

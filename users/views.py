@@ -1,8 +1,8 @@
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, TemplateView, UpdateView
+from django.views.generic import CreateView
 from django.contrib.auth.views import LoginView
 from django.views.generic import DetailView
 from django.contrib import auth, messages
@@ -13,6 +13,7 @@ from projects.forms import ApplicationForm, TeacherApplicationForm
 from projects.models import Application, Project, TeacherApplication
 from users.forms import UserRegistrationForm
 from users.models import User
+from django.db import transaction
 
 class UserLoginView(LoginView):
     template_name = 'main/index.html'
@@ -33,6 +34,18 @@ class UserLoginView(LoginView):
             return redirect(self.get_success_url())
         # Если пользователь не найден или сессия отсутствует, возвращаем стандартный ответ
         return super().form_valid(form)
+    def form_invalid(self, form):
+        # Генерируем обновленную страницу с формой, где есть ошибки
+        context = self.get_context_data(register_form=form)
+        html = render_to_string('main/index.html', context, request=self.request)
+
+        # Проверяем, это AJAX-запрос или нет
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'html': html})
+
+        # Если запрос не AJAX, перенаправляем на главную страницу
+        messages.error(self.request, "Проверьте корректность данных в форме.")
+        return redirect('main:index')
 
 class UserRegistrationView(CreateView):
     template_name = 'main/index.html'
@@ -135,10 +148,15 @@ class ProfileView(LoginRequiredMixin, DetailView):
                 messages.error(request, 'У вас нет прав на выполнение этого действия.')
                 return redirect('users:profile', username=self.request.user.username)
 
-            # Создаем проект на основе заявки
-            project = application.create_project()
-            application.status = 'approved'
-            application.save()
+            application.status = "approved"
+            # Проверяем, что заявка одобрена
+            if application.status == 'approved':
+                with transaction.atomic():
+                    # Создаем проект
+                    project = application.create_project()
+
+                    # Удаляем заявку
+                    application.delete()
             messages.success(request, f"Заявка принята. Проект '{project.title}' создан.")
             return redirect('users:profile', username=self.request.user.username)
         elif 'create_application' in request.POST:

@@ -16,15 +16,26 @@ document.getElementById("reg-button").addEventListener("click", function() {
 });
 
 // Закрытие модальных окон
-function closeModal(modalId) {
-    document.getElementById(modalId).style.display = "none";
+function openModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'block'; // Показываем модальное окно
 }
 
-// Закрытие по клику вне модального окна
-window.addEventListener("click", function(event) {
-    if (event.target.classList.contains("modal")) {
-        event.target.style.display = "none";
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    modal.style.display = 'none'; // Скрываем модальное окно
+}
+
+// неЗакрытие по клику вне модального окна
+window.onclick = function (event) {
+    const modal = document.getElementById(modalId);
+    const modalDialog = modal ? modal.querySelector('.modal-dialog') : null;
+
+    // Проверяем, был ли клик за пределами .modal-dialog
+    if (modal && event.target === modal && !modalDialog.contains(event.target)) {
+        // Игнорируем клик (не закрываем окно)
+        event.stopPropagation(); // Предотвращаем дальнейшее всплытие события
     }
-});
+    };
 
 

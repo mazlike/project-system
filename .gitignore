@@ -15,3 +15,9 @@ media/
 
 #another apps
 ngrok.exe
+
+.env
+
+path/
+staticfiles/
+logs/

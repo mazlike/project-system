@@ -36,14 +36,14 @@
     <main class="main-content">
         <!-- Навигационная панель -->
         <nav class="navigation">
-            <span class="navigation-item" onclick="showSection('my-projects')">Мои проекты</span>
+            <div class="navigation-item" onclick="showSection('my-projects')">Мои проекты</div> 
             {% if user.is_student %}
-                <span class="navigation-item" onclick="showSection('submit-application')">Подать заявку на проект</span>
+                <div class="navigation-item" onclick="showSection('submit-application')">Подать заявку на проект</div> 
             {% else %}
-                <span class="navigation-item" onclick="showSection('create-project')">Создать проект</span>
+                <div class="navigation-item" onclick="showSection('create-project')">Создать проект</div> 
             {% endif %} 
-            <span class="navigation-item" onclick="showSection('view-applications')">Просмотр заявок</span>
-            <span class="navigation-item" onclick="showSection('my-applications')">Мои заявки</span>
+            <div class="navigation-item" onclick="showSection('view-applications')">Просмотр заявок</div> 
+            <div class="navigation-item" onclick="showSection('my-applications')">Мои заявки</div> 
         </nav>
     <section class="content" id="content">
       <!-- Мои проекты -->
@@ -59,7 +59,7 @@
                            <span class="nickname"> {{ member.username }} </span>
                         {% endfor %}
                 </p>
-                <form action="{% url 'projects:project' id=project.id %}" method="post">
+                <form action="{% url 'projects:project' uuid=project.uuid %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary">Перейти к проекту</button>
                 </form>

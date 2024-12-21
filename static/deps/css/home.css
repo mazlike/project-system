@@ -153,6 +153,7 @@ html, body {
   font-weight: bold;
   display: block;
   padding: 10px;
+  cursor: pointer;
 }
 
 /* Контент */

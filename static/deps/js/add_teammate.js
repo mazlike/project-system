@@ -59,7 +59,15 @@ document.addEventListener('DOMContentLoaded', function () {
             const usernames = Array.from(teamMembersList.children).map(item =>
                 item.textContent.replace('×', '').trim()
             );
-            hiddenField.value = usernames.join(',');
+            // Создаём скрытые поля для каждого участника
+            Array.from(teamMembersList.children).forEach(item => {
+                const username = item.textContent.replace('×', '').trim();
+                const hiddenField = document.createElement('input');
+                hiddenField.type = 'hidden';
+                hiddenField.name = 'team_members_input';
+                hiddenField.value = username;
+                container.appendChild(hiddenField);
+            });
 
             // Удаляем отсутствующих участников из select лидера
             Array.from(leaderSelect.options).forEach(option => {

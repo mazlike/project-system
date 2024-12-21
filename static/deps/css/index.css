@@ -125,6 +125,18 @@ main {
     align-items: center;
     z-index: 1050;
 }
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    margin: 0;
+    font-size: 1.25rem;
+}
+  
+
 .modal-backdrop {
     z-index: 1040 !important;
 }
@@ -180,9 +192,18 @@ main {
     max-height: 300px; /* Максимальная высота */
     overflow-y: auto; /* Прокрутка по вертикали, если контент превышает высоту */
 }
-
+.btn-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+  
+.btn-close:hover {
+    color: #ff0000;
+}
 /* Кнопка "Войти" */
-.modal-content button {
+.button {
     background-color: #3a3a55;
     color: white;
     border: none;
@@ -194,8 +215,7 @@ main {
     margin-top: 10px;;
 }
 
-/* Эффект при наведении на кнопку */
-.modal-content button:hover {
+.button:hover {
     background-color: red; /* Кнопка становится красной при наведении */
 }
 

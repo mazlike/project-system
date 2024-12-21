@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+import uuid
 
 class Project(models.Model):
     title = models.CharField(max_length=255, verbose_name="Название проекта")
@@ -8,7 +9,7 @@ class Project(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
     leader = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='led_projects', verbose_name="Лидер проекта")
     members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='projects', blank=True, verbose_name="Участники проекта")
-
+    uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     
     def __str__(self):
         return self.title
@@ -41,6 +42,7 @@ class Application(models.Model):
         )
         # Добавляем участников команды
         project.members.set(self.team_members.all())
+
         return project
     
 class TeacherApplication(models.Model):
@@ -52,3 +54,13 @@ class TeacherApplication(models.Model):
 
     def __str__(self):
         return self.title
+    
+class Evaluation(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name='evaluations')
+    grade = models.CharField(max_length=2, choices=[('5', '5'), ('4', '4'), ('3', '3'), ('na', 'н/а')])
+    team_comment = models.TextField(blank=True, null=True)
+    personal_comment = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Оценка для проекта {self.project.title}"

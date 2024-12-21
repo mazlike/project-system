@@ -1,0 +1,9 @@
+<h2>Загрузить файл</h2>
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="mb-3">
+    <label for="file" class="form-label">Выберите файл:</label>
+    <input type="file" class="form-control" id="file" name="file" required>
+  </div>
+  <button name='upload_file' type="submit" class="btn btn-primary">Загрузить</button>
+</form>

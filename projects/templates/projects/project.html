@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load custom_filters %}
 
 {% block head %}
     <head>
@@ -13,11 +14,13 @@
 {% endblock %}
 
 {% block header %}
-    <header class="header">
+    <header class="header {% if has_evaluation %}header-evaluated{% endif %}">
         <a href="{% url 'users:profile' user.username %}" class="logo">
             <img src="{% static 'deps/logo.jpg' %}" alt="logo" class="avatar-img">
             <span class="home">Home</span>
             <span class="project-title"></span>
+            {%if has_evaluation == True%} <span class="evaluation"> Оценка {{evaluation}} </span>
+            {%endif%}
         </a>
         <div class="user-info">
         <span class="username">{{ user.username }}</span>
@@ -32,9 +35,9 @@
 {%endblock%}
 
 {% block content %}
-    <main class="main-content">
+    <main class="main-content" >
       <nav class="navigation">
-          <div class="navigation-item" onclick="showBlock('diagram')">Диаграмма</div> 
+          {% comment %} <div class="navigation-item" onclick="showBlock('diagram')">Диаграмма</div>  {% endcomment %}
           <div class="navigation-item" onclick="showBlock('team')">Команда</div>
           {% comment %} <div class="navigation-item" onclick="showBlock('updates')">Последние обновления</div> {% endcomment %}
           <div class="navigation-item" onclick="showBlock('tasks')">Задачи</div>
@@ -44,13 +47,14 @@
           {% endif %}
       </nav>
     <section class="content student-content" id="student-content">
-      <div class="block" id="diagram">
+      <input type="hidden" id="has-evaluation" value="{{ has_evaluation|yesno:'true,false' }}">
+      {% comment %} <div class="block" id="diagram">
         <h2>Диаграмма проекта</h2><br>
         <div class="image-upload">
           <img id="diagram-image" src="{% static 'deps/logo.jpg' %}" alt="Диаграмма проекта"><br>
         </div>
         <br><input type="file" id="upload-diagram" onchange="uploadDiagram(event)">
-      </div> 
+      </div>  {% endcomment %}
       
       <div class="block" id="team">
         <h2>Команда проекта</h2><br>
@@ -80,18 +84,18 @@
       <div class="block" id="tasks" >
         <div class="flex-header">
           <h2>Задачи</h2>
-          <button class="btn btn-primary" onclick="openModal()">Создать задачу</button>
+          <button class="btn btn-primary" onclick="openModal('taskModal')">Создать задачу</button>
         </div>
           <!-- Модальное окно -->
-          <div id="customModal" class="modal" tabindex="-1">
+          <div id="taskModal" class="modal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Создание задачи</h5>
-                        <button type="button" class="btn-close" onclick="closeModal()">&times;</button>
+                        <button type="button" class="btn-close" onclick="closeModal('taskModal')">&times;</button>
                     </div>
                     <div class="modal-body">
-                        <form id="taskForm" method="post" action="{% url 'projects:project' project.id %}">
+                        <form id="taskForm" method="post" action="{% url 'projects:project' project.uuid %}">
                           {% csrf_token %}
                           <div class="mb-3">
                               <label for="taskTitle" class="form-label">Название задачи</label>
@@ -110,6 +114,12 @@
                                   {% endfor %}
                               </select>
                           </div>
+                          {% if user.is_teacher %}
+                            <div class="mb-3">
+                              <label for="is_necessary" class="form-label">Необходимо?</label>
+                              <input type="checkbox" class="form-check-input" id="is_necessary" name="is_necessary">
+                            </div>
+                          {% endif %}
                           <div class="mb-3">
                               <label for="taskDeadline" class="form-label">Дедлайн</label>
                               <input type="datetime-local" class="form-control" id="taskDeadline" name="deadline">
@@ -121,13 +131,126 @@
             </div>
         </div>
         {% for task in tasks %}
-          <div class="task" >
+          <div class="task {% if task.is_necessary %}necessary{% endif %}">
             <div class="task-info">
-              <span class="task-date-added">Добавлено: {{task.created_at}}</span>
-              <span class="task-status">{{task.status}}</span>
+              <span class="task-date-added"> Добавлено: {{task.created_at}} | Дедлайн: {{task.deadline}}</span>
+              <span class="task-status {% if task.status == 'выполнена' %}status-completed{% elif task.status == 'в работе' %}status-in-progress{% elif task.status == 'открыта' %}status-pending{% elif task.status == 'требуется проверка' %}status-requires-verification{% endif %}">{{task.status}}</span>
+              <button class="create-note-btn" onclick="openModal('noteModal-{{ task.id }}')">Создать заметку</button>
+              <button class="notes-btn" onclick="openModal('listnoteModal-{{ task.id }}')">Посмотреть заметки</button>
             </div>
-            <p>{{task.title}}</p>
-            <button onclick="markTaskAsSent(this)">Выполнено</button>
+            <p>
+              {{task.title}} |
+              <small>{{task.description}} </small> |
+              <small>Назначено на {{task.assigned_to}}</small>
+            </p>
+
+            <!-- Модальное окно -->
+            <div id="noteModal-{{ task.id }}" class="modal" tabindex="-1">
+              <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title">Создание заметки</h5>
+                          <button type="button" class="btn-close" onclick="closeModal('noteModal-{{ task.id }}')">&times;</button>
+                      </div>
+                      <div class="modal-body">
+                        <form id="noteForm" method="post" action="{% url 'projects:project' project.uuid %}">
+                          {% csrf_token %}
+                          <input type="hidden" name="objectType" value="task">
+                          <input type="hidden" name="objectId" value="{{ task.id }}">
+                          <div class="mb-3">
+                            <textarea class="comment" name='noteContent' id="noteContent" placeholder="Комментарий"></textarea>
+                          </div>
+                          <div class="mb-3">
+                            <label for="addressedTo" class="form-label">Адресовать кому:</label>
+                            <select class="form-control" id="addressedTo" name="addressedTo">
+                              <option value="">Не выбрано</option>
+                              <option value="{{curator.id}}">{{curator.username}}</option>
+                              {% for member in members %}
+                                {%if member != user%}
+                                  <option value="{{ member.id }}">{{ member.username }}</option>
+                                {%endif%}
+                              {% endfor %}
+                            </select>
+                          </div>
+                          <div class="mb-3">
+                            <label for="noteCategory" class="form-label">Категория заметки:</label>
+                            <select class="form-control" id="noteCategory" name="noteCategory">
+                              <option value="correction">Исправление</option>
+                              <option value="feedback">Обратная связь</option>
+                              <option value="commendation">Похвала</option>
+                              <option value="criticism">Критика</option>
+                            </select>
+                          </div>
+                          <button type="submit" class="btn btn-primary" name="create_note">Создать заметку</button>
+                        </form>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <div id="listnoteModal-{{ task.id }}" class="modal" tabindex="-1">
+              <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title">Заметки</h5>
+                          <button type="button" class="btn-close" onclick="closeModal('listnoteModal-{{ task.id }}')">&times;</button>
+                      </div>
+                      <div class="modal-body">
+                        <ul>
+                          {% for note in task_notes|get_item:task.id %}
+                            <li class="{% if note.author == user %}note-right{% else %}note-left{% endif %}">
+                              <div class="note-category" style="background-color: {% if note.category == 'correction' %}#ff5733{% elif note.category == 'feedback' %}#33c1ff{% elif note.category == 'commendation' %}#208035{% elif note.category == 'criticism' %}#ff3333{%endif%};">
+                                {{ note.get_category_display }}
+                              </div>
+                              <div class="note-content">
+                                {{ note.content }}
+                                <br>
+                                <small>
+                                  Автор: {{ note.author.username }} |
+                                  {% if note.addressed_to %}
+                                    Адресовано: {{ note.addressed_to.username }}
+                                  {% else %}
+                                    Адресовано: Все
+                                  {% endif %}
+                                </small>
+                              </div>
+                            </li>
+                          {% empty %}
+                            <li>Нет заметок</li>
+                          {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+              </div>
+            </div>
+            <button class="btn" onclick="openModal('statusModal-{{task.id}}')">Поменять статус задачи</button>
+            <!-- Модальное окно для изменения статуса задачи -->
+            <div id="statusModal-{{task.id}}" class="modal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Изменить статус задачи</h5>
+                            <button type="button" class="btn-close" onclick="closeModal('statusModal-{{task.id}}')">&times;</button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'projects:project' project.uuid %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="task_id" id="taskIdInput" value="{{ task.id }}">
+                                <div class="mb-3">
+                                    <label for="status" class="form-label">Статус задачи:</label>
+                                    <select name="status" id="status" class="form-control">
+                                        <option value="в работе">В работе</option>
+                                        {%if  user == project.leader %}
+                                          <option value="выполнена">Выполнена</option>
+                                        {%endif%}
+                                        <option value="требуется проверка">Требуется проверка</option>
+                                    </select>
+                                </div>
+                                <button type="submit" name="change_status" class="btn btn-primary">Сохранить</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
           </div>
         {% endfor %}
         
@@ -136,121 +259,181 @@
       <div class="block" id="repository">
         
         <div class="flex-header">
-          <h2>Репозиторий</h2>
-          <button onclick="uploadFile()">Загрузить файл</button>
+            <h2>Репозиторий</h2>
+            <button name='fileModal' onclick="openModal('fileModal')">Загрузить файл</button>
+            <button name='changesModal' onclick="openModal('changesModal')">Последние изменения</button>
         </div>
-        {% for file in repository %}
-          <div class="file-block">
-            <p>Файл 1.txt</p>
-            <button onclick="deleteFile(this)">Удалить файл</button>
+       <div class="file-grid-container">
+            {% for file in repository_files %}
+                <div class="file-card {% if file.task.is_necessary %}necessary-task{% endif %}">
+                    <h5>
+                        <a href="{% url 'projects:download_file' project.uuid file.id %}" target="_blank">{{ file.user_file_name }}</a>
+                    </h5>
+                    <small>
+                        <div>
+                        Загружено: {{ file.uploaded_by.username }}
+                        </div>
+                        <div>
+                        Дата: {{ file.uploaded_at }}
+                        </div>
+                        {% if file.task %}
+                        <div>
+                            Задача: {{ file.task.title }}
+                        </div>
+                        {% else %}
+                        <div>
+                            Не привязано к задаче
+                        </div>
+                        {% endif %}
+                    </small>
+                    <form method="post", action="{% url 'projects:project' project.uuid %}">
+                      {% csrf_token %}
+                      <input type="hidden" name="file_id" value="{{ file.id }}">
+                      <button class="delete-file-btn" name = 'delete_file'  data-file-id="{{ file.id }}">
+                        <i class="fas fa-times"></i> <!-- Иконка крестика -->
+                      </button>
+                    </form>
+                </div>
+            {% empty %}
+                <div class="no-files">Нет файлов в репозитории</div>
+            {% endfor %}
+        </div>
+        <div id="fileModal" class="modal" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title">Загрузить файл</h5>
+                      <button type="button" class="btn-close" onclick="closeModal('fileModal')">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <form method="post" enctype="multipart/form-data" action="{% url 'projects:project' project.uuid %}">
+                      {% csrf_token %}
+                      <div class="mb-3">
+                        <label for="user_file_name" class="form-label">Название файла:</label>
+                        <input type="text" class="form-control" id="user_file_name" name="user_file_name" placeholder="Введите название файла" required>
+                      </div>
+                      <div class="mb-3">
+                          <label for="taskId" class="form-label">Выберите задачу:</label>
+                          <select name="taskId" class="form-control">
+                              {% for task in tasks %}
+                                  <option value="{{ task.id }}">{{ task.title }}</option>
+                              {% endfor %}
+                          </select>
+                      </div>
+                      <div class="mb-3">
+                          <label for="file" class="form-label">Выберите файл:</label>
+                          <input type="file" class="form-control" id="file" name="file" required>
+                      </div>
+                      <button name='upload_file' type="submit" class="btn btn-primary">Загрузить</button>
+                  </form>
+                </div>
+            </div>
           </div>
-        {% endfor %}
+        </div>
+        <div id="changesModal" class="modal" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title">Последние изменения в репозитории</h5>
+                      <button type="button" class="btn-close" onclick="closeModal('changesModal')">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <ul class="list-group">
+                      {% for change in last_changes %}
+                          <li class="list-group-item">
+                              <div class="commit-header">
+                                  <span class="commit-date">{{ change.date }}</span>
+                              </div>
+                              <div class="commit-details">
+                                  <strong>Сообщение:</strong> {{ change.message }}
+                              </div>
+                          </li>
+                      {% empty %}
+                          <li class="list-group-item">Нет изменений в репозитории.</li>
+                      {% endfor %}
+                    </ul>
+                </div>
+            </div>
+          </div>
+        </div>
       </div>
       {% if user.is_teacher %}
         <div class="block" id="evaluate">
-          <h2>Оценить проект</h2>
-          <p>Заполните форму, если хотите завершить проект.</p>
-          
-          <label for="grade">Оценка:</label>
-          <select id="grade" required>
-            <option value="">Выберите оценку</option>
-            <option value="5">5</option>
-            <option value="4">4</option>
-            <option value="3">3</option>
-            <option value="na">н/а</option>
-          </select>
-        
-          <br><br><label for="team-comment">Комментарий для команды:</label><br><br>
-          <textarea id="team-comment" maxlength="1000" placeholder="Максимум 1000 символов"></textarea>
-        
-          <br><label for="personal-comment">Личный комментарий (его видите только вы):</label><br><br>
-          <textarea id="personal-comment" maxlength="1000" placeholder="Максимум 1000 символов"></textarea>
-        
-          <br><br><button onclick="submitEvaluation()">Оценить проект</button>
+          <div> <h2>Оценить проект</h2> <button onclick="openModal('tasksInfoModal')">Информация о задачах</button>  <button onclick="openModal('notesInfoModal')">Информация о заметках</button></div>
+          <!-- Кнопки для открытия модальных окон -->
+          <p></p>
+
+          <form method="post" action="{% url 'projects:project' project.uuid %}">
+            {% csrf_token %}
+            <label for="grade">Оценка:</label>
+            <select name="grade" id="grade" required>
+              <option value="">Выберите оценку</option>
+              <option value="5">5</option>
+              <option value="4">4</option>
+              <option value="3">3</option>
+              <option value="na">н/а</option>
+            </select>
+
+
+            <br><br>
+            <label for="team-comment">Комментарий для команды:</label><br><br>
+            <textarea id="team-comment" name="team-comment" maxlength="1000" placeholder="Максимум 1000 символов"></textarea>
+
+            <br>
+            <label for="personal-comment">Личный комментарий (его видите только вы):</label><br><br>
+            <textarea id="personal-comment" name="personal-comment" maxlength="1000" placeholder="Максимум 1000 символов"></textarea>
+
+            <br><br>
+            <button type="submit" name="submit_evaluation">Оценить проект</button>
+          </form>
         </div>
+        <!-- Модальное окно для информации о задачах -->
+        <div id="tasksInfoModal" class="modal" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Информация о задачах</h5>
+                <button type="button" class="btn-close" onclick="closeModal('tasksInfoModal')">&times;</button>
+              </div>
+              <div class="modal-body">
+                <p>Всего задач: {{ total_tasks }}</p>
+                <p>Выполнено задач: {{ completed_tasks }}</p>
+                <p>Необходимых задач выполнено: {{ necessary_completed_tasks }}</p>
+                <p>Просрочено дедлайнов: {{ overdue_tasks }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Модальное окно для информации о заметках -->
+        <div id="notesInfoModal" class="modal" tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Информация о заметках</h5>
+                <button type="button" class="btn-close" onclick="closeModal('notesInfoModal')">&times;</button>
+              </div>
+              <div class="modal-body">
+                <p>Заметок оставлено: {{ user_notes_count }}</p>
+                <hr>
+                <h5>Статистика по категориям заметок:</h5>
+                <ul>
+                  <li>Исправление: {{ category_stats.correction|default:0 }}</li>
+                  <li>Обратная связь: {{ category_stats.feedback|default:0 }}</li>
+                  <li>Похвала: {{ category_stats.commendation|default:0 }}</li>
+                  <li>Критика: {{ category_stats.criticism|default:0 }}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
       {% endif %}
     </section>
 
     </main>
-<script>
-    function showBlock(blockId) {
-      const blocks = document.querySelectorAll('.block');
-      blocks.forEach(block => {
-        block.style.display = (block.id === blockId) ? 'block' : 'none';
-      });
+<script src="{% static 'deps/js/projects.js' %}">
 
-      const projectTitle = document.querySelector('.project-title');
-      projectTitle.textContent = document.querySelector(`.navigation-item[onclick="showBlock('${blockId}')"]`).textContent;
-      
-    }
-    window.onload = function() {
-      showBlock('diagram');
-    }
-    function toggleDropdown() {
-      const dropdown = document.getElementById('avatar-dropdown');
-      dropdown.classList.toggle('show');
-    }
-    function submitEvaluation() {
-      const grade = document.getElementById('grade').value;
-      const teamComment = document.getElementById('team-comment').value;
-      const personalComment = document.getElementById('personal-comment').value;
-    
-      if (!grade) {
-        alert('Пожалуйста, выберите оценку.');
-        return;
-      }
-
-      alert('Форма успешно отправлена!');
-
-      disableProjectInteraction();
-      updateHeaderWithGrade(grade);
-    }
-    
-    function disableProjectInteraction() {
-      const buttons = document.querySelectorAll('button');
-      buttons.forEach(button => {
-        if (button.textContent !== 'Скачать файл') {
-          button.style.display = 'none';
-        }
-      });
-
-      const inputs = document.querySelectorAll('input, textarea');
-      inputs.forEach(input => {
-        input.disabled = true;
-      });
-
-      document.querySelectorAll('.block').forEach(block => {
-        block.style.pointerEvents = 'none';
-      });
-    }
-
-    function updateHeaderWithGrade(grade) {
-      const header = document.querySelector('.header');
-      header.style.backgroundColor = '#28a745';
-      const projectGrade = document.getElementById('project-grade');
-      projectGrade.textContent = `Оценка: ${grade}`;
-      projectGrade.style.display = 'inline';
-    }
-    function openModal() {
-      const modal = document.getElementById('customModal');
-      modal.style.display = 'block'; // Показываем модальное окно
-    }
-    
-    function closeModal() {
-      const modal = document.getElementById('customModal');
-      modal.style.display = 'none'; // Скрываем модальное окно
-    }
-    
-    // Отключение закрытия при клике вне окна
-    window.onclick = function (event) {
-      const modal = document.getElementById('customModal');
-      const modalDialog = document.querySelector('.modal-dialog');
-    
-      // Проверяем, был ли клик за пределами .modal-dialog
-      if (event.target === modal && !modalDialog.contains(event.target)) {
-        // Игнорируем клик (не закрываем окно)
-        return;
-      }
-    };
 </script>
 {% endblock %}

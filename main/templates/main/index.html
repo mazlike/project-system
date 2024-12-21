@@ -15,25 +15,28 @@
         <!-- Модальные окна -->
         <div id="modal-entry" class="modal">
             <div class="modal-content">
-                <h2>Войти&nbsp;&nbsp;в&nbsp;&nbsp;личный&nbsp;&nbsp;кабинет</h2>
+                <div class="modal-header">
+                    <h5 class="modal-title">Авторизация</h5>
+                    <button type="button" class="btn-close" onclick="closeModal('modal-entry')">&times;</button>
+                </div>
                 <form action="{% url 'users:login'  %}" method="post">
                     {% csrf_token %}
                     {{ login_form.as_p }}
-                    <button type="submit">Войти</button>
+                    <button class="button" type="submit">Войти</button>
                 </form>
             </div>
         </div>
         
         <div id="modal-reg" class="modal">
             <div class="modal-content">
-                <div id="messages-container">
-                    {% include "messages.html" %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Регистрация</h5>
+                    <button type="button" class="btn-close" onclick="closeModal('modal-reg')">&times;</button>
                 </div>
-                <h2>Регистрация</h2>
                 <form id="registration-form" action="{% url 'users:register'  %}" method="post">
                     {% csrf_token %}
                     {{ register_form.as_p }}
-                    <button type="submit">Зарегистрироваться</button>
+                    <button class="button" type="submit">Зарегистрироваться</button>
                 </form>
             </div>
         </div>
