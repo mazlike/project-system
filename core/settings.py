@@ -148,7 +148,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'ru'
 
-TIME_ZONE = 'TIME_ZONE'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -171,6 +171,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 INTERNAL_IPS = [
     # ...
     "127.0.0.1",
+    "10.130.0.21",
     # ...
 ]
 

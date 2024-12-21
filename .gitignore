@@ -20,4 +20,4 @@ ngrok.exe
 
 path/
 staticfiles/
-logs/
+logs/*
