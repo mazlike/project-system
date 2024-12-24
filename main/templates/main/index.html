@@ -7,7 +7,7 @@
         <main>
             <h1>ДОБРО ПОЖАЛОВАТЬ В СИСТЕМУ УПРАВЛЕНИЯ ПРОЕКТАМИ</h1>
             <div class="buttons">
-                <button class="role-button" id="reg-button">Регистрация</button>
+                <button class="role-button" id="reg-button" >Регистрация</button>
                 <button class="role-button" id="entry-button">Вход</button>
             </div>
         </main>
@@ -40,7 +40,7 @@
                 </form>
             </div>
         </div>
-        <script src="/static/deps/js/index.js"></script>
+        <script src="{% static 'deps/js/index.js' %}"></script>
     {% else %}
     <div class="buttons">
         <a href="{% url 'users:logout' %}">
