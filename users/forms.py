@@ -14,10 +14,20 @@ class UserRegistrationForm(UserCreationForm):
         widget=forms.PasswordInput,
         help_text="Пароль должен быть минимум 8 символов"
     )
+    is_teacher = forms.BooleanField(
+        label="Преподаватель?",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        required=False,  # Поле не обязательно для заполнения
+        help_text="Отметьте, если вы являетесь преподавателем.",  # Текст подсказки
+        initial=False,  # Начальное значение по умолчанию
+        error_messages={'required': 'Пожалуйста, укажите, являетесь ли вы преподавателем.'}  # Сообщение об ошибке
+        )
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2']
-    
+        fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2', 'is_teacher']
+   
+
+ 
 class ProfileForm(UserChangeForm):
     class Meta:
         model = User

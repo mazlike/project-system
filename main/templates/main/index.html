@@ -26,18 +26,15 @@
                 </form>
             </div>
         </div>
-        
         <div id="modal-reg" class="modal">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Регистрация</h5>
                     <button type="button" class="btn-close" onclick="closeModal('modal-reg')">&times;</button>
                 </div>
-                <form id="registration-form" action="{% url 'users:register'  %}" method="post">
-                    {% csrf_token %}
-                    {{ register_form.as_p }}
-                    <button class="button" type="submit">Зарегистрироваться</button>
-                </form>
+                <div id="form-container">
+                    {% include "partials/modal_registration.html" %}
+                </div>
             </div>
         </div>
         <script src="{% static 'deps/js/index.js' %}"></script>
@@ -48,5 +45,4 @@
         </a>
     </div>
     {% endif %}
-    
 {% endblock %}

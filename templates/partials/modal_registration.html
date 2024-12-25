@@ -1,0 +1,57 @@
+<form id="registration-form" action="{% url 'users:register' %}" method="post">
+    {% csrf_token %}
+    <!-- Имя -->
+    <div class="form-group">
+        <label for="{{ register_form.first_name.id_for_label }}" class="form-label">{{ register_form.first_name.label }}</label>
+        {{ register_form.first_name }}
+        {{ register_form.first_name.errors }}
+    </div>
+
+    <!-- Фамилия -->
+    <div class="form-group">
+        <label for="{{ register_form.last_name.id_for_label }}" class="form-label">{{ register_form.last_name.label }}</label>
+        {{ register_form.last_name }}
+        {{ register_form.last_name.errors }}
+    </div>
+
+    <!-- Имя пользователя -->
+    <div class="form-group">
+        <label for="{{ register_form.username.id_for_label }}" class="form-label">{{ register_form.username.label }}</label>
+        {{ register_form.username }}
+        {{ register_form.username.errors }}
+    </div>
+
+    <!-- Электронная почта -->
+    <div class="form-group">
+        <label for="{{ register_form.email.id_for_label }}" class="form-label">{{ register_form.email.label }}</label>
+        {{ register_form.email }}
+        {{ register_form.email.errors }}
+    </div>
+
+    <!-- Пароль -->
+    <div class="form-group">
+        <label for="{{ register_form.password1.id_for_label }}" class="form-label">{{ register_form.password1.label }}</label>
+        {{ register_form.password1 }}
+        {{ register_form.password1.errors }}
+        <small class="text-muted">{{ register_form.password1.help_text }}</small>
+    </div>
+
+    <!-- Подтверждение пароля -->
+    <div class="form-group">
+        <label for="{{ register_form.password2.id_for_label }}" class="form-label">{{ register_form.password2.label }}</label>
+        {{ register_form.password2 }}
+        {{ register_form.password2.errors }}
+    </div>
+
+    <!-- Преподаватель? -->
+    <div class="form-group form-check">
+        <label for="{{ register_form.is_teacher.id_for_label }}" class="form-check-label">
+            {{ register_form.is_teacher.label }}
+        </label>
+        {{ register_form.is_teacher }}
+        {{ register_form.is_teacher.errors }}
+    </div>
+    <div> <small class="text-muted">{{ register_form.is_teacher.help_text }}</small> </div>
+
+    <button class="button" type="submit">Зарегистрироваться</button>
+</form>
