@@ -36,7 +36,7 @@ class UserLoginView(LoginView):
         return super().form_valid(form)
     def form_invalid(self, form):
         # Генерируем обновленную страницу с формой, где есть ошибки
-        context = self.get_context_data(register_form=form)
+        context = self.get_context_data(login_form=form)
         html = render_to_string('main/index.html', context, request=self.request)
 
         # Проверяем, это AJAX-запрос или нет
@@ -57,6 +57,10 @@ class UserRegistrationView(CreateView):
 
     def form_valid(self, form):
         user = form.save()  # Сохраняем форму и создаем пользователя
+        if user.is_teacher == True:
+            user.is_student = False
+            user.save()
+        
         auth.login(self.request, user)  # Выполняем авторизацию для нового пользователя
         messages.success(self.request, f"{user.username}, Вы успешно зарегистрированы и вошли в аккаунт.")
 

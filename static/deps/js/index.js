@@ -37,5 +37,3 @@ window.onclick = function (event) {
         event.stopPropagation(); // Предотвращаем дальнейшее всплытие события
     }
     };
-
-

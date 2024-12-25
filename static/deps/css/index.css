@@ -360,7 +360,7 @@ main {
     color: white;
 }
 
-.messages {
+/* .messages {
     list-style: none;
     padding: 0;
     margin: 20px 0;
@@ -381,7 +381,7 @@ main {
 .messages .error {
     background-color: #f8d7da;
     color: #721c24;
-}
+} */
 
 /* Подвал */
 footer {
@@ -404,3 +404,23 @@ footer .contact a:hover {
     text-decoration: underline;
 }
 
+/* Стили для чекбокса и метки */
+.form-check {
+    display: flex;
+    align-items: center;
+    
+}
+
+.form-check-input {
+    margin-right: 10px;
+    transform: scale(1.2); /* Увеличиваем размер чекбокса */
+}
+
+.form-check-label {
+    font-weight: normal;
+    color: #ffffff;
+}
+.form-group {
+    padding-top: 2%;
+    padding-bottom: 2%;
+}
