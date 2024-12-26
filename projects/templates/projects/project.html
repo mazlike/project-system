@@ -256,7 +256,9 @@
                                     <label for="status" class="form-label">Статус задачи:</label>
                                     <select name="status" id="status" class="form-control">
                                         <option value="в работе">В работе</option>
-                                        {%if  user == project.leader %}
+                                        {%if  user == project.leader and task.is_necessary == False%}
+                                          <option value="выполнена">Выполнена</option>
+                                        {% elif user == project.created_by and task.is_necessary == True%}
                                           <option value="выполнена">Выполнена</option>
                                         {%endif%}
                                         <option value="требуется проверка">Требуется проверка</option>
