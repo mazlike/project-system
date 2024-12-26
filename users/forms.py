@@ -25,9 +25,6 @@ class UserRegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'username', 'email', 'password1', 'password2', 'is_teacher']
-   
-
- 
 class ProfileForm(UserChangeForm):
     class Meta:
         model = User
