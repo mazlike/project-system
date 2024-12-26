@@ -131,19 +131,29 @@
             </div>
         </div>
         {% for task in tasks %}
+          
           <div class="task {% if task.is_necessary %}necessary{% endif %}">
             <div class="task-info">
               <span class="task-date-added"> Добавлено: {{task.created_at}} | Дедлайн: {{task.deadline}}</span>
               <span class="task-status {% if task.status == 'выполнена' %}status-completed{% elif task.status == 'в работе' %}status-in-progress{% elif task.status == 'открыта' %}status-pending{% elif task.status == 'требуется проверка' %}status-requires-verification{% endif %}">{{task.status}}</span>
-              <button class="create-note-btn" onclick="openModal('noteModal-{{ task.id }}')">Создать заметку</button>
-              <button class="notes-btn" onclick="openModal('listnoteModal-{{ task.id }}')">Посмотреть заметки</button>
+              <div class="button-container">
+                <button class="create-note-btn" onclick="openModal('noteModal-{{ task.id }}')">Создать заметку</button>
+                <button class="notes-btn" onclick="openModal('listnoteModal-{{ task.id }}')">Посмотреть заметки</button>
+              </div>
             </div>
+            
             <p>
               {{task.title}} |
               <small>{{task.description}} </small> |
               <small>Назначено на {{task.assigned_to}}</small>
             </p>
-
+          <form method="post" action="{% url 'projects:project' project.uuid %}">
+            {% csrf_token %}
+            <input type="hidden" name="task_id" value="{{ task.id }}">
+            <button class="delete-task-btn" name = 'delete_task'  data-file-id="{{ task.id }}">
+              <i class="fas fa-times"></i> <!-- Иконка крестика -->
+            </button>
+          </form>
             <!-- Модальное окно -->
             <div id="noteModal-{{ task.id }}" class="modal" tabindex="-1">
               <div class="modal-dialog modal-dialog-centered">
@@ -213,6 +223,13 @@
                                   {% endif %}
                                 </small>
                               </div>
+                              <form method="post" action="{% url 'projects:project' project.uuid %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="note_id" value="{{ note.id }}">
+                                <button class="delete-note-btn" name = 'delete_note'  data-file-id="{{ note.id }}">
+                                  <i class="fas fa-times"></i> <!-- Иконка крестика -->
+                                </button>
+                              </form>
                             </li>
                           {% empty %}
                             <li>Нет заметок</li>

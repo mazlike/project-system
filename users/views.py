@@ -1,4 +1,4 @@
-from django.http import HttpResponseRedirect, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views import View
@@ -82,6 +82,8 @@ class UserRegistrationView(CreateView):
 
         # Если запрос не AJAX, перенаправляем на главную страницу
         messages.error(self.request, "Проверьте корректность данных в форме.")
+        print(form.errors)
+        print(form.cleaned_data)
         return redirect('main:index')
 
 

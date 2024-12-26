@@ -131,6 +131,7 @@ html, body {
   height: 100%; 
   overflow-y: auto;
   margin-bottom: 20px;
+  min-width: 10%;
 }
 
 .content {
@@ -356,10 +357,16 @@ html, body {
   background-color: #2E2A3C;
 }
 
-.create-note-btn {
-  position: absolute; /* Абсолютное позиционирование */
-  bottom: 15%; /* Отступ снизу */
-  left: 91%; /* Отступ слева */
+.button-container {
+  position: absolute;
+  bottom: 15%;
+  right: 0; /* Прижмите контейнер к правому краю */
+  display: flex;
+  gap: 10px; /* Расстояние между кнопками */
+  padding-right: 20px; /* Отступ от правого края */
+}
+
+.notes-btn, .create-note-btn {
   padding: 10px 20px;
   background-color: #2d2447;
   color: white;
@@ -368,22 +375,7 @@ html, body {
   cursor: pointer;
 }
 
-.create-note-btn:hover {
-  background-color: #2E2A3C;
-}
-
-.notes-btn {
-  position: absolute; /* Абсолютное позиционирование */
-  bottom: 15%; /* Отступ снизу */
-  left: 81%; /* Отступ слева */
-  padding: 10px 20px;
-  background-color: #2d2447;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.notes-btn:hover {
+.notes-btn:hover, .create-note-btn:hover {
   background-color: #2E2A3C;
 }
 .file-block {
@@ -525,6 +517,7 @@ button:disabled {
   align-items: center; /* Центровка по вертикали */
   min-height: calc(100% - 1rem); /* Высота окна с небольшим отступом */
 }
+
 .modal-content {
   position: relative;
   display: flex;
@@ -857,4 +850,21 @@ ul {
 
 .commit-details strong {
   color: #8b7979;
+}
+
+.delete-task-btn {
+  position: absolute;
+  background: none;
+  border: none;
+  cursor: pointer;
+  right: 0; top: 0;
+  margin-right: -30px;
+}
+
+.delete-note-btn {
+  position: absolute;
+  background: none;
+  border: none;
+  cursor: pointer;
+  left: 0; top: 0;
 }

@@ -132,6 +132,22 @@ class ProjectView(LoginRequiredMixin, DetailView):
             else:
                 messages.error(request, 'Ошибка при создании задачи.')
             return redirect('projects:project', uuid=project_uuid)
+        if 'delete_task' in request.POST:
+            task_id = request.POST.get('task_id')
+            task = get_object_or_404(Task, id=task_id)
+
+            # Удаляем задачу из системы
+            if task:
+
+                # Удаляем запись о задаче из базы данных
+                task.delete()
+
+                messages.success(request, 'Задача успешна удалена.')
+            else:
+                messages.error(request, 'Задачи не существует')
+
+            return redirect('projects:project', uuid=project_uuid)
+            
         if 'create_note' in request.POST:
             note_content = request.POST.get('noteContent')  # Получаем содержимое заметки
             addressed_to_id = request.POST.get('addressedTo')  # Получаем ID адресата
@@ -160,8 +176,22 @@ class ProjectView(LoginRequiredMixin, DetailView):
                     content_object=content_object,
                     category=note_category,
                 )
-                messages.success(request, 'Заетка успешно создана')
+                messages.success(request, 'Заметка успешно создана')
                 return redirect('projects:project', uuid=project_uuid)
+        if 'delete_note' in request.POST:
+            note_id = request.POST.get('note_id')
+            note = get_object_or_404(Note, id=note_id)
+
+            # Удаляем задачу из системы
+            if note:
+                # Удаляем запись о задаче из базы данных
+                note.delete()
+                messages.success(request, 'Заметка успешна удалена.')
+            else:
+                messages.error(request, 'Заметки не существует')
+
+            return redirect('projects:project', uuid=project_uuid)    
+            
         if 'upload_file' in request.POST:
             task_id = request.POST.get('taskId')
             project = get_object_or_404(Project, uuid=project_uuid)
