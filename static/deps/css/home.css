@@ -145,6 +145,7 @@ html, body {
   height: calc(100% - 140px);
   overflow-y: auto;
   margin-bottom: 20px;
+  flex: 0 0 200px;
 }
 
 .navigation-item {
@@ -490,3 +491,21 @@ form button:hover {
   background-color: #2196f3; /* синий для информации */
 }  
 
+.project-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px;
+  margin-bottom: 10px;
+  word-wrap: break-word;
+}
+
+.project-info {
+  flex: 1;
+  margin-right: 10px; /* Отступ между информацией о проекте и оценкой */
+}
+
+.project-evaluation {
+  width: 20%; /* Ширина блока с оценкой */
+  text-align: right; /* Выравнивание текста по правому краю */
+}

@@ -10,7 +10,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 from projects.forms import ApplicationForm, TeacherApplicationForm
-from projects.models import Application, Project, TeacherApplication
+from projects.models import Application, Evaluation, Project, TeacherApplication
 from users.forms import UserRegistrationForm
 from users.models import User
 from django.db import transaction
@@ -116,9 +116,14 @@ class ProfileView(LoginRequiredMixin, DetailView):
             context['applications'] = Application.objects.filter(applicant=user)
         context['application_form'] = ApplicationForm()
         if user.is_teacher:
-            context['projects'] = Project.objects.filter(created_by=user)
+            projects = Project.objects.filter(created_by=user)
         else:
-            context['projects'] = Project.objects.filter(members=user)
+            projects = Project.objects.filter(members=user)    
+        context['projects'] = projects
+        
+        evaluations = Evaluation.objects.filter(project__in=projects)
+        context['evaluations'] = evaluations
+        
         return context
     
     def post(self, request, *args, **kwargs):

@@ -51,14 +51,30 @@
         <h1>Мои проекты</h1>
         {% for project in projects %}
             <div class="application-block">
-                <h2>{{ project.title }}</h2>
-                <p><strong>Описание:</strong> {{ project.description }}</p>
-                <p><strong>Лидер:</strong> <span class="nickname leader"> {{ project.leader.username }}</span></p>
-                <p><strong>Участники:</strong>
-                        {% for member in project.members.all %}
-                           <span class="nickname"> {{ member.username }} </span>
+                <div class="project-container">
+                    <div class="project-info">
+                        <h2>{{ project.title }}</h2>
+                        <p>{{ project.description }}</p>
+                        <p><strong>Лидер:</strong> <span class="nickname leader"> {{ project.leader.username }}</span></p>
+                        <p><strong>Участники:</strong>
+                            {% for member in project.members.all %}
+                                <span class="nickname"> {{ member.username }} </span>
+                            {% endfor %}
+                        </p>
+                    </div>
+                    <div class="project-evaluation">
+                        {% for evaluation in evaluations %}
+                            {% if evaluation.project == project %}
+                                <p>Оценка: {{ evaluation.get_grade_display }}</p>
+                                <p>Комментарий команды: {{ evaluation.team_comment }}</p>
+                                <p>Личный комментарий: {{ evaluation.personal_comment }}</p>
+                            {% endif %}
+                        {% empty %}
+                            <p>Оценка отсутствует.</p>
                         {% endfor %}
-                </p>
+                    </div>
+                </div>
+                
                 <form action="{% url 'projects:project' uuid=project.uuid %}" method="post">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-primary">Перейти к проекту</button>
