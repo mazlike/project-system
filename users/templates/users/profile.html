@@ -66,8 +66,10 @@
                         {% for evaluation in evaluations %}
                             {% if evaluation.project == project %}
                                 <p>Оценка: {{ evaluation.get_grade_display }}</p>
-                                <p>Комментарий команды: {{ evaluation.team_comment }}</p>
-                                <p>Личный комментарий: {{ evaluation.personal_comment }}</p>
+                                <p>Комментарий команде: {{ evaluation.team_comment }}</p>
+                                {% if user.is_teacher and user == project.created_by%}
+                                    <p>Личный комментарий: {{ evaluation.personal_comment }}</p>
+                                {%endif%}
                             {% endif %}
                         {% empty %}
                             <p>Оценка отсутствует.</p>
