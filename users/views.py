@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView
@@ -73,7 +73,7 @@ class UserRegistrationView(CreateView):
 
     def form_invalid(self, form):
         # Генерируем обновленную страницу с формой, где есть ошибки
-        context = self.get_context_data(register_form=form)
+        context = self.get_context_data(register_form=form, login_form=AuthenticationForm())
         html = render_to_string('main/index.html', context, request=self.request)
 
         # Проверяем, это AJAX-запрос или нет
@@ -81,10 +81,8 @@ class UserRegistrationView(CreateView):
             return JsonResponse({'success': False, 'html': html})
 
         # Если запрос не AJAX, перенаправляем на главную страницу
-        messages.error(self.request, "Проверьте корректность данных в форме.")
-        print(form.errors)
-        print(form.cleaned_data)
-        return redirect('main:index')
+        messages.error(self.request, f"Проверьте корректность данных в форме.")
+        return render(self.request, 'main/index.html', context)
 
 
     def render_messages(self):
