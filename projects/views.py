@@ -1,5 +1,5 @@
 import os
-from django.http import HttpResponse
+from django.http import FileResponse, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import DetailView
 from django.contrib import messages
@@ -302,8 +302,19 @@ def download_file(request, project_uuid, file_id):
     if file.project.uuid != project_uuid:
         return HttpResponse("Файл не найден", status=404)
 
-    # Открываем файл из репозитория
-    with open(file.file_path, 'rb') as f:
-        response = HttpResponse(f.read(), content_type='application/octet-stream')
-        response['Content-Disposition'] = f'attachment; filename="{file.file_name}"'
-        return response
+    # Проверяем, что файл существует
+    if not os.path.exists(file.file_path):
+        return HttpResponse("Файл не найден", status=404)
+
+    # Определяем MIME-тип файла
+    if file.file_name.endswith('.docx'):
+        content_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    elif file.file_name.endswith('.xlsx'):
+        content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    else:
+        content_type = 'application/octet-stream'
+
+    # Открываем файл и возвращаем его как ответ
+    response = FileResponse(open(file.file_path, 'rb'), content_type=content_type)
+    response['Content-Disposition'] = f'attachment; filename="{file.file_name}"'
+    return response
